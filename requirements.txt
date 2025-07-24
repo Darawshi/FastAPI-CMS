@@ -1,6 +1,6 @@
 fastapi[all]
 uvicorn[standard]
-sqlmodel
+sqlmodel~=0.0.24
 asyncpg
 alembic
 passlib[bcrypt]
@@ -8,3 +8,6 @@ python-jose[cryptography]
 python-multipart
 aiofiles
 httpx
+python-dotenv
+SQLAlchemy~=2.0.41
+pydantic~=2.11.7
