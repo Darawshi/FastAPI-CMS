@@ -1,9 +1,9 @@
-fastapi[all]
+fastapi[all]~=0.116.1
 uvicorn[standard]
 sqlmodel~=0.0.24
 asyncpg
 alembic
-passlib[bcrypt]
+passlib[bcrypt]~=1.7.4
 python-jose[cryptography]
 python-multipart
 aiofiles
