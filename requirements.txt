@@ -1,13 +1,6 @@
 fastapi[all]~=0.116.1
-uvicorn[standard]
 sqlmodel~=0.0.24
-asyncpg
-alembic
 passlib[bcrypt]~=1.7.4
-python-jose[cryptography]
-python-multipart
-aiofiles
-httpx
-python-dotenv
 SQLAlchemy~=2.0.41
 pydantic~=2.11.7
+aiosmtplib~=4.0.1

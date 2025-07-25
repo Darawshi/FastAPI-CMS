@@ -7,7 +7,7 @@ from app.core.database import async_session
 from sqlmodel import select
 from app.schemas.password import ForgotPasswordRequest, ResetPasswordRequest
 from datetime import timedelta
-
+from app.core.email_utils import send_email
 
 router = APIRouter()
 
@@ -88,3 +88,6 @@ async def reset_password(data: ResetPasswordRequest, session: AsyncSession = Dep
     await session.commit()
 
     return {"message": "Password reset successful"}
+
+
+

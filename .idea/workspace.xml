@@ -5,19 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1a47017e-a63f-4f54-877a-a9a67d09916d" name="Changes" comment="asdf">
-      <change afterPath="$PROJECT_DIR$/app/api/auth.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/core/dependencies.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/crud/user.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/schemas/password.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/schemas/user.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/services/auth.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/api/routes/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/core/email_utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/FastAPI-CMS.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/FastAPI-CMS.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/core/security.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/security.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/routes/auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/core/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/user_role.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user_role.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -63,6 +57,11 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\USER-Q\Desktop\FastAPI-CMS\FastAPI-CMS\app\api\routes" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="FastAPI-CMS" />
@@ -105,7 +104,7 @@
       <updated>1753275991792</updated>
       <workItem from="1753276000603" duration="437000" />
       <workItem from="1753276461463" duration="2996000" />
-      <workItem from="1753331701373" duration="2047000" />
+      <workItem from="1753331701373" duration="3427000" />
     </task>
     <task id="LOCAL-00001" summary="asdf">
       <option name="closed" value="true" />
@@ -131,7 +130,15 @@
       <option name="project" value="LOCAL" />
       <updated>1753331722520</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="asdf">
+      <option name="closed" value="true" />
+      <created>1753334959763</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1753334959763</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
