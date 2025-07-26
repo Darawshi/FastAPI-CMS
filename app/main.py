@@ -1,21 +1,24 @@
+# app/main.py
+
 from fastapi import FastAPI
+from contextlib import asynccontextmanager
+
 from app.core.database import init_db
 from app.api.routes import auth
+from app.core import events  # noqa: F401 (ensures event listeners are registered)
 
-app = FastAPI(title="CMS Backend")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await init_db()  # replaces deprecated @app.on_event("startup")
+    yield
+    # Optional: add shutdown logic here
+
+app = FastAPI(title="CMS Backend", lifespan=lifespan)
+
+# Routers
 app.include_router(auth.router, tags=["auth"])
 
-
-@app.on_event("startup")
-async def on_startup():
-    await init_db()
-
-
-@app.on_event("startup")
-async def on_startup():
-    await init_db()
-
-
+# Root endpoint
 @app.get("/")
 async def root():
     return {"message": "CMS is running"}

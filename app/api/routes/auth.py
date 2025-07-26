@@ -1,18 +1,20 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlmodel import select
+from datetime import timedelta, datetime, timezone
+from typing import AsyncGenerator
 from app.schemas.user import UserCreate, UserRead, UserLogin
+from app.schemas.password import ForgotPasswordRequest, ResetPasswordRequest
 from app.models.user import User
 from app.core.security import hash_password, verify_password, create_access_token, decode_access_token
 from app.core.database import async_session
-from sqlmodel import select
-from app.schemas.password import ForgotPasswordRequest, ResetPasswordRequest
-from datetime import timedelta
+from sqlalchemy import select
 from app.core.email_utils import send_email
 
 router = APIRouter()
 
 
-async def get_session() -> AsyncSession:
+async def get_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session() as session:
         yield session
 
@@ -29,7 +31,7 @@ async def register(user_create: UserCreate, session: AsyncSession = Depends(get_
         email=user_create.email,
         full_name=user_create.full_name,
         hashed_password=hash_password(user_create.password),
-        role=user_create.role or "editor_user"
+        role=user_create.role or "editor"
     )
     session.add(user)
     await session.commit()
@@ -44,10 +46,16 @@ async def login(user_login: UserLogin, session: AsyncSession = Depends(get_sessi
     user = result.first()
 
     if not user or not verify_password(user_login.password, user.hashed_password):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+
+    # Update last login time
+    user.last_login = datetime.now(timezone.utc)
+    session.add(user)
+    await session.commit()
 
     token = create_access_token(data={"sub": str(user.id), "role": user.role})
     return {"access_token": token, "token_type": "bearer"}
+
 
 
 @router.post("/forgot-password")
@@ -64,9 +72,19 @@ async def forgot_password(data: ForgotPasswordRequest, session: AsyncSession = D
         expires_delta=timedelta(minutes=15)
     )
 
-    # In real app: send this token via email
-    return {"reset_token": token, "expires_in": 900}
+    # Compose email
+    subject = "Password Reset Request"
+    body = (
+        f"Hello {user.full_name},\n\n"
+        f"To reset your password, use the following token (valid for 15 minutes):\n\n"
+        f"{token}\n\n"
+        "If you didn’t request this, you can ignore this email.\n\n"
+        "Best regards,\nYour Support Team"
+    )
 
+    await send_email(subject=subject, to_email=user.email, body=body)
+
+    return {"message": "Reset token sent to your email"}
 
 @router.post("/reset-password")
 async def reset_password(data: ResetPasswordRequest, session: AsyncSession = Depends(get_session)):
@@ -88,6 +106,3 @@ async def reset_password(data: ResetPasswordRequest, session: AsyncSession = Dep
     await session.commit()
 
     return {"message": "Password reset successful"}
-
-
-

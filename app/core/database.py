@@ -6,7 +6,7 @@ from sqlmodel import SQLModel
 from app.core.config import get_settings
 
 settings = get_settings()
-DATABASE_URL = settings.DATABASE_URL
+DATABASE_URL = settings.database_url
 
 engine = create_async_engine(DATABASE_URL, echo=True)
 async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)

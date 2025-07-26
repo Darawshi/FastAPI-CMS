@@ -25,6 +25,8 @@ class UserRead(UserBase):
     created_at: datetime
     updated_at: datetime
 
+    class Config:
+        orm_mode = True
 
 # Used when updating an existing user
 class UserUpdate(SQLModel):

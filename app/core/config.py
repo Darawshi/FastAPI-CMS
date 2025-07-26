@@ -5,18 +5,22 @@ from functools import lru_cache
 
 class Settings(BaseSettings):
     DB_HOST: str
-    DB_PORT: str
+    DB_PORT: int
     DB_NAME: str
     DB_USER: str
     DB_PASSWORD: str
+
     SMTP_HOST: str
     SMTP_PORT: int
     SMTP_USER: str
     SMTP_PASSWORD: str
     SMTP_FROM: str
 
+    SECRET_KEY: str            # added for JWT secret
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60  # default to 60 if not set
+
     @property
-    def DATABASE_URL(self) -> str:
+    def database_url(self) -> str:
         return (
             f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}"
             f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
