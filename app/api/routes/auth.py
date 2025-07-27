@@ -3,13 +3,15 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
 from datetime import timedelta, datetime, timezone
 from typing import AsyncGenerator
+
+from app.models.user_role import UserRole
 from app.schemas.user import UserCreate, UserRead, UserLogin
 from app.schemas.password import ForgotPasswordRequest, ResetPasswordRequest
 from app.models.user import User
 from app.core.security import hash_password, verify_password, create_access_token, decode_access_token
 from app.core.database import async_session
-from sqlalchemy import select
 from app.core.email_utils import send_email
+from uuid import UUID
 
 router = APIRouter()
 
@@ -21,9 +23,8 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
 
 @router.post("/register", response_model=UserRead)
 async def register(user_create: UserCreate, session: AsyncSession = Depends(get_session)):
-    statement = select(User).where(User.email == user_create.email)
-    result = await session.exec(statement)
-    existing_user = result.first()
+    result = await session.execute(select(User).where(User.email == user_create.email))
+    existing_user = result.scalars().first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
 
@@ -31,7 +32,7 @@ async def register(user_create: UserCreate, session: AsyncSession = Depends(get_
         email=user_create.email,
         full_name=user_create.full_name,
         hashed_password=hash_password(user_create.password),
-        role=user_create.role or "editor"
+        role=user_create.role or UserRole.editor
     )
     session.add(user)
     await session.commit()
@@ -41,17 +42,23 @@ async def register(user_create: UserCreate, session: AsyncSession = Depends(get_
 
 @router.post("/login")
 async def login(user_login: UserLogin, session: AsyncSession = Depends(get_session)):
-    statement = select(User).where(User.email == user_login.email)
-    result = await session.exec(statement)
-    user = result.first()
+    result = await session.execute(select(User).where(User.email == user_login.email))
+    user = result.scalars().first()
 
     if not user or not verify_password(user_login.password, user.hashed_password):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
-    # Update last login time
-    user.last_login = datetime.now(timezone.utc)
+    # Update times with timezone-aware datetime
+    now = datetime.now(timezone.utc)
+    user.last_login = now
+    user.updated_at = now
     session.add(user)
     await session.commit()
+    await session.refresh(user)
 
     token = create_access_token(data={"sub": str(user.id), "role": user.role})
     return {"access_token": token, "token_type": "bearer"}
@@ -60,9 +67,8 @@ async def login(user_login: UserLogin, session: AsyncSession = Depends(get_sessi
 
 @router.post("/forgot-password")
 async def forgot_password(data: ForgotPasswordRequest, session: AsyncSession = Depends(get_session)):
-    statement = select(User).where(User.email == data.email)
-    result = await session.exec(statement)
-    user = result.first()
+    result = await session.execute(select(User).where(User.email == data.email))
+    user = result.scalars().first()
 
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -86,18 +92,27 @@ async def forgot_password(data: ForgotPasswordRequest, session: AsyncSession = D
 
     return {"message": "Reset token sent to your email"}
 
+
 @router.post("/reset-password")
 async def reset_password(data: ResetPasswordRequest, session: AsyncSession = Depends(get_session)):
     payload = decode_access_token(data.token)
     if not payload or payload.get("purpose") != "reset":
         raise HTTPException(status_code=400, detail="Invalid or expired token")
 
-    user_id = payload.get("sub")
-    if not user_id:
+    # Get the user ID from the token payload
+    user_id_from_token = payload.get("sub")  # This was missing in your code
+    if not user_id_from_token:
         raise HTTPException(status_code=400, detail="Invalid token")
 
-    result = await session.exec(select(User).where(User.id == user_id))
-    user = result.first()
+    try:
+        user_id = UUID(user_id_from_token)  # Convert string to UUID
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid user ID format")
+
+    # Now query using the UUID
+    result = await session.execute(select(User).where(User.id == user_id))
+    user = result.scalars().first()
+
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 

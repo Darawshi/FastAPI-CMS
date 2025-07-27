@@ -5,18 +5,17 @@ from sqlmodel import select
 from app.models.user import User
 from app.schemas.user import UserCreate, UserUpdate
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.security import get_password_hash
+from app.core.security import hash_password
 
 
 async def get_user_by_id(session: AsyncSession, user_id: UUID) -> Optional[User]:
-    result = await session.exec(select(User).where(User.id == user_id))
-    return result.first()
+    result = await session.execute(select(User).where(User.id == user_id))
+    return result.scalars().first()
 
 
 async def get_user_by_email(session: AsyncSession, email: str) -> Optional[User]:
-    result = await session.exec(select(User).where(User.email == email))
-    return result.first()
-
+    result = await session.execute(select(User).where(User.email == email))
+    return result.scalars().first()
 
 async def create_user(session: AsyncSession, user_create: UserCreate) -> User:
     db_user = User(
@@ -24,7 +23,7 @@ async def create_user(session: AsyncSession, user_create: UserCreate) -> User:
         full_name=user_create.full_name,
         role=user_create.role,
         is_active=user_create.is_active,
-        hashed_password=get_password_hash(user_create.password),
+        hashed_password=hash_password(user_create.password),
     )
     session.add(db_user)
     try:
@@ -39,7 +38,7 @@ async def create_user(session: AsyncSession, user_create: UserCreate) -> User:
 async def update_user(session: AsyncSession, db_user: User, user_update: UserUpdate) -> User:
     for key, value in user_update.dict(exclude_unset=True).items():
         if key == "password":
-            db_user.hashed_password = get_password_hash(value)
+            db_user.hashed_password = hash_password(value)
         else:
             setattr(db_user, key, value)
 

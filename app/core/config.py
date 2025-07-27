@@ -1,5 +1,5 @@
 # app/core/config.py
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 from functools import lru_cache
 
 
@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     DB_NAME: str
     DB_USER: str
     DB_PASSWORD: str
+    DB_TIMEZONE: str = "UTC"  # Add this line
 
     SMTP_HOST: str
     SMTP_PORT: int
@@ -23,7 +24,7 @@ class Settings(BaseSettings):
     def database_url(self) -> str:
         return (
             f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}"
-            f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+            f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}?timezone={self.DB_TIMEZONE}"
         )
 
     class Config:
