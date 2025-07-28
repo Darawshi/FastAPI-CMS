@@ -16,8 +16,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="CMS Backend", lifespan=lifespan)
 
 # Routers
-app.include_router(auth.router, tags=["auth"])
-app.include_router(users.router, tags=["users"])
+app.include_router(auth.router,prefix="/auth", tags=["auth"])
+app.include_router(users.router, prefix="/user", tags=["users"])
 # Root endpoint
 
 

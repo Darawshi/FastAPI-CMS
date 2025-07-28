@@ -1,7 +1,7 @@
 from uuid import UUID
 from typing import Optional
 from datetime import datetime
-from pydantic import EmailStr
+from pydantic import EmailStr, constr, field_validator
 from app.models.user_role import UserRole
 from sqlmodel import SQLModel
 
@@ -16,7 +16,14 @@ class UserBase(SQLModel):
 
 # Used when creating a user (e.g. during registration or admin creation)
 class UserCreate(UserBase):
-    password: str
+    email: EmailStr
+    password: constr(min_length=8)
+    full_name: str
+
+    # noinspection PyMethodFirstArgAssignment
+    @field_validator("email")
+    def normalize_email(cls, v: str) -> str:
+        return v.lower().strip()  # Normalize email to lowercase and strip whitespace
 
 
 # Used when reading a user object (e.g. for GET responses)

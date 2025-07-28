@@ -1,185 +1,101 @@
 # app/api/routes/users.py
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from typing import List, Optional
-from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 from uuid import UUID
-from datetime import datetime, timezone
-from app.crud.user import create_user
+from app.crud.user import create_user, delete_user_by_id, update_user, get_users, update_user_by_id, \
+    deactivate_user_by_id, reactivate_user_by_id
 from app.models.user import User
 from app.schemas.user import UserRead, UserUpdate, UserCreate
-from app.core.dependencies import get_current_user, get_session
+from app.core.dependencies import get_current_user, get_session, require_admin
 from app.models.user_role import UserRole
-from app.core.security import hash_password
 
 
 router = APIRouter()
 
 
-def apply_user_update(user: User, user_update: UserUpdate) -> None:
-    update_data = user_update.model_dump(exclude_unset=True)
-    for field, value in update_data.items():
-        if field == "password" and value is not None:
-            setattr(user, "hashed_password", hash_password(value))
-        elif field != "password":
-            setattr(user, field, value)
-    # Add this line to update the timestamp
-    user.updated_at = datetime.now(timezone.utc)
-
-
-
-@router.get("/me", response_model=UserRead)
+@router.get("/me", response_model=UserRead ,name="Profile")
 async def read_own_profile(
-    session: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
-    statement = select(User).where(User.id == current_user.id)
-    result = await session.execute(select(User).where(User.id == current_user.id))
-    user = result.scalars().first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
+    # No need to query the database, current_user is already populated
+    return current_user
 
 
-@router.patch("/me/update", response_model=UserRead)
+@router.patch("/me/update", response_model=UserRead,name="Update My Profile")
 async def update_own_profile(
     user_update: UserUpdate,
     session: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
-    apply_user_update(current_user, user_update)
-    session.add(current_user)
-    await session.commit()
-    await session.refresh(current_user)
-    return current_user
+    return await update_user(session, current_user, user_update)
 
+@router.post("/create", response_model=UserRead,name="Admin Create User")
+async def create_user_admin(
+        user_create: UserCreate,
+        session: AsyncSession = Depends(get_session),
+        current_user: User = Depends(require_admin),
+):
+    return await create_user(session, user_create)
 
-@router.get("/", response_model=List[UserRead])
+@router.get("/all", response_model=List[UserRead],name="Admin List Users")
 async def list_users(
     offset: int = Query(0, ge=0),
     limit: int = Query(10, ge=1, le=100),
     role: Optional[UserRole] = None,
     is_active: Optional[bool] = None,
     session: AsyncSession = Depends(get_session),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_admin),
 ):
-    if current_user.role != UserRole.admin:
-        raise HTTPException(status_code=403, detail="Not authorized")
-
-    statement = select(User)
-    if role is not None:
-        statement = statement.where(User.role == role)
-    if is_active is not None:
-        statement = statement.where(User.is_active == is_active)
-
-    statement = statement.offset(offset).limit(limit)
-    result = await session.execute(statement)
-    return result.scalars().all()
+    return await get_users(session, offset, limit, role, is_active)
 
 
-@router.patch("/{user_id}", response_model=UserRead)
+@router.patch("/{user_id}", response_model=UserRead , name="Admin Update User")
 async def update_user_admin(
     user_id: UUID,
     user_update: UserUpdate,
     session: AsyncSession = Depends(get_session),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_admin),
 ):
-    if current_user.role != UserRole.admin:
-        raise HTTPException(status_code=403, detail="Not authorized")
+    return await update_user_by_id(session, user_id, user_update)
 
-    statement = select(User).where(User.id == user_id)
-    result = await session.execute(select(User).where(User.id == user_id))
-    user = result.scalars().first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    apply_user_update(user, user_update)
-
-    session.add(user)
-    await session.commit()
-    await session.refresh(user)
-    return user
-
-
-@router.post("/", response_model=UserRead)
-async def create_user_admin(
-        user_create: UserCreate,
-        session: AsyncSession = Depends(get_session),
-        current_user: User = Depends(get_current_user),
-):
-    if current_user.role != UserRole.admin:
-        raise HTTPException(status_code=403, detail="Not authorized")
-    # Check if email exists
-    result = await session.execute(select(User).where(User.email == user_create.email))
-    existing = result.scalars().first()
-    if existing:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    return await create_user(session, user_create)
-
-@router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT,name="Admin Delete User")
 async def delete_user(
     user_id: UUID,
     session: AsyncSession = Depends(get_session),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_admin),
 ):
-    if current_user.role != UserRole.admin:
-        raise HTTPException(status_code=403, detail="Not authorized")
-
-    user = await session.get(User, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    await session.delete(user)
-    await session.commit()
-    return
+    await delete_user_by_id(session, user_id)
 
 
-@router.post("/{user_id}/deactivate", response_model=UserRead)
+@router.post("/deactivate/{user_id}", response_model=UserRead,name="Admin Deactivate User")
 async def deactivate_user(
     user_id: UUID,
     session: AsyncSession = Depends(get_session),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_admin),
 ):
-    if current_user.role != UserRole.admin:
-        raise HTTPException(status_code=403, detail="Not authorized")
-
-    user = await session.get(User, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    user.is_active = False
-    session.add(user)
-    await session.commit()
-    await session.refresh(user)
-    return user
+    return await deactivate_user_by_id(session, user_id)
 
 
-@router.post("/{user_id}/reactivate", response_model=UserRead)
+@router.post("/reactivate/{user_id}", response_model=UserRead,name="Admin Reactivate User")
 async def reactivate_user(
     user_id: UUID,
     session: AsyncSession = Depends(get_session),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_admin),
 ):
-    if current_user.role != UserRole.admin:
-        raise HTTPException(status_code=403, detail="Not authorized")
+    return await reactivate_user_by_id(session, user_id)
 
-    user = await session.get(User, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
 
-    user.is_active = True
-    session.add(user)
-    await session.commit()
-    await session.refresh(user)
-    return user
 
-@router.post("/first_admin", response_model=UserRead)
+@router.post("/first_admin", response_model=UserRead, name="Create First Admin")
 async def create_first_admin(
         user_create: UserCreate,
         session: AsyncSession = Depends(get_session),
 ):
     # Check if email exists
-    result = await session.execute(select(User).where(User.email == user_create.email))
+    normalized_email = str(user_create.email).lower()  # normalize
+    result = await session.execute(select(User).where(User.email == normalized_email))
     existing = result.scalars().first()
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")

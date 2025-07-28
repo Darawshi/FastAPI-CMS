@@ -9,7 +9,6 @@ class Settings(BaseSettings):
     DB_NAME: str
     DB_USER: str
     DB_PASSWORD: str
-    DB_TIMEZONE: str = "UTC"  # Add this line
 
     SMTP_HOST: str
     SMTP_PORT: int
@@ -18,13 +17,14 @@ class Settings(BaseSettings):
     SMTP_FROM: str
 
     SECRET_KEY: str            # added for JWT secret
+    ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60  # default to 60 if not set
 
     @property
     def database_url(self) -> str:
         return (
             f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}"
-            f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}?timezone={self.DB_TIMEZONE}"
+            f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
         )
 
     class Config:
