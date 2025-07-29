@@ -27,8 +27,7 @@ class User(SQLModel, table=True):
     )
     updated_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
-        sa_column=Column(DateTime(timezone=True),
-        onupdate=lambda: datetime.now(timezone.utc))
+        sa_column=Column(DateTime(timezone=True))
     )
 
     @validates("email")

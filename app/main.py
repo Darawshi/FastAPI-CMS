@@ -5,7 +5,6 @@ from contextlib import asynccontextmanager
 
 from app.core.database import init_db
 from app.api.routes import auth ,users
-from app.core import events  # noqa: F401 (ensures event listeners are registered)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

@@ -26,10 +26,7 @@ async def authenticate_user(email: str, password: str, session: AsyncSession):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials",
         )
-
-    now = datetime.now(timezone.utc)
-    user.last_login = now
-    user.updated_at = now
+    user.last_login = datetime.now(timezone.utc)
     session.add(user)
     await session.commit()
     await session.refresh(user)

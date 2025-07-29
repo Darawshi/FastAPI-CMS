@@ -30,17 +30,6 @@ async def get_users(
     users: List[User] = list(result.scalars().all())
     return users
 
-
-async def get_user_by_id(session: AsyncSession, user_id: UUID) -> Optional[User]:
-    result = await session.execute(select(User).where(User.id == user_id))
-    return result.scalars().first()
-
-
-async def get_user_by_email(session: AsyncSession, email: str) -> Optional[User]:
-    normalized_email = email.lower().strip()
-    result = await session.execute(select(User).where(User.email == normalized_email))
-    return result.scalars().first()
-
 async def create_user(session: AsyncSession, user_create: UserCreate) -> User:
     normalized_email = str(user_create.email).lower().strip()  # normalize email
     existing = await get_user_by_email(session, normalized_email)
@@ -60,18 +49,7 @@ async def create_user(session: AsyncSession, user_create: UserCreate) -> User:
         return db_user
     except IntegrityError:
         await session.rollback()
-        raise
-
-async def update_user_by_id(
-    session: AsyncSession,
-    user_id: UUID,
-    user_update: UserUpdate,
-) -> User:
-    user = await session.get(User, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return await update_user(session, user, user_update)
-
+        raise HTTPException(status_code=400, detail="Email already registered")
 
 async def update_user(session: AsyncSession, db_user: User, user_update: UserUpdate) -> User:
     update_data = user_update.model_dump(exclude_unset=True)
@@ -100,10 +78,32 @@ async def update_user(session: AsyncSession, db_user: User, user_update: UserUpd
     db_user.updated_at = datetime.now(timezone.utc)
 
     session.add(db_user)
-    await session.commit()
-    await session.refresh(db_user)
-    return db_user
+    try:
+        await session.commit()
+        await session.refresh(db_user)
+        return db_user
+    except IntegrityError:
+        await session.rollback()
+        raise HTTPException(status_code=400, detail="Update failed due to a constraint violation.")
 
+async def get_user_by_id(session: AsyncSession, user_id: UUID) -> Optional[User]:
+    result = await session.execute(select(User).where(User.id == user_id))
+    return result.scalars().first()
+
+async def get_user_by_email(session: AsyncSession, email: str) -> Optional[User]:
+    normalized_email = email.lower().strip()
+    result = await session.execute(select(User).where(User.email == normalized_email))
+    return result.scalars().first()
+
+async def update_user_by_id(
+    session: AsyncSession,
+    user_id: UUID,
+    user_update: UserUpdate,
+) -> User:
+    user = await session.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return await update_user(session, user, user_update)
 
 async def delete_user_by_id(session: AsyncSession, user_id: UUID) -> None:
     user = await session.get(User, user_id)
@@ -112,9 +112,6 @@ async def delete_user_by_id(session: AsyncSession, user_id: UUID) -> None:
 
     await session.delete(user)
     await session.commit()
-
-
-
 
 async def set_user_active_status(
     session: AsyncSession,

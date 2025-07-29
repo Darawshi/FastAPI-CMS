@@ -16,10 +16,7 @@ class UserBase(SQLModel):
 
 # Used when creating a user (e.g. during registration or admin creation)
 class UserCreate(UserBase):
-    email: EmailStr
     password: constr(min_length=8)
-    full_name: str
-
     # noinspection PyMethodFirstArgAssignment
     @field_validator("email")
     def normalize_email(cls, v: str) -> str:
