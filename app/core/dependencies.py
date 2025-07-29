@@ -3,7 +3,6 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import AsyncGenerator, Optional
-from datetime import datetime, timezone
 from app.models.user import User
 from app.core.security import decode_access_token
 from app.core.database import async_session
@@ -30,9 +29,4 @@ async def get_current_user(token: str = Depends(oauth2_scheme),session: AsyncSes
 
     if not user:
         raise HTTPException(status_code=401, detail="Invalid authentication credentials")
-
-    # 🔄 Update last_login
-    user.last_login = datetime.now(timezone.utc)
-    session.add(user)
-    await session.commit()
     return user
