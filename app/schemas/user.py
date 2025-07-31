@@ -38,8 +38,20 @@ class UserUpdate(SQLModel):
     full_name: Optional[str] = None
     role: Optional[UserRole] = None
     is_active: Optional[bool] = None
-    password: Optional[str] = None
+    password: Optional[constr(min_length=8)] = None  # 👈 Length validation added
 
+    @field_validator("email")
+    def normalize_email(cls, v: str) -> str:
+        return v.lower().strip() if v else v
+
+class UserUpdateOwn(SQLModel):
+    email: Optional[EmailStr] = None
+    full_name: Optional[str] = None
+    password: Optional[constr(min_length=8)] = None  # 👈 Length validation added
+
+    @field_validator("email")
+    def normalize_email(cls, v: str) -> str:
+        return v.lower().strip() if v else v
 
 # Used internally for authentication (login input)
 class UserLogin(SQLModel):

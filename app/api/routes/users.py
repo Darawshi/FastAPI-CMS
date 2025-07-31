@@ -1,13 +1,12 @@
 # app/api/routes/users.py
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query, status
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlmodel import select
 from uuid import UUID
-from app.crud.user import create_user, delete_user_by_id, update_user, get_users, update_user_by_id, \
-    deactivate_user_by_id, reactivate_user_by_id, get_user_by_id
+from app.crud.user import create_user, delete_user_by_id, get_users, update_user_by_id, \
+    deactivate_user_by_id, reactivate_user_by_id, get_user_by_id, update_own_user
 from app.models.user import User
-from app.schemas.user import UserRead, UserUpdate, UserCreate
+from app.schemas.user import UserRead, UserUpdate, UserCreate, UserUpdateOwn
 from app.core.dependencies import get_current_user, get_session
 from app.models.user_role import UserRole
 from app.services.permissions import validate_user_creation_permissions, filter_users_by_role_viewer, \
@@ -26,11 +25,11 @@ async def read_own_profile(
 
 @router.patch("/me/update", response_model=UserRead,name="Update My Profile")
 async def update_own_profile(
-    user_update: UserUpdate,
+    user_update: UserUpdateOwn,
     session: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
-    return await update_user(session, current_user, user_update)
+    return await update_own_user(session, current_user, user_update)
 
 @router.post("/create", response_model=UserRead,name="Admin/senior_editor Create User")
 async def create_user_admin_or_senior_editor(

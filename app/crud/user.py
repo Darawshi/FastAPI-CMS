@@ -4,10 +4,10 @@ from uuid import UUID
 from sqlalchemy import select
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
-from sqlmodel import select
+from sqlmodel import select, desc
 from app.models.user import User
 from app.models.user_role import UserRole
-from app.schemas.user import UserCreate, UserUpdate
+from app.schemas.user import UserCreate, UserUpdate, UserUpdateOwn
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.security import hash_password
 
@@ -25,7 +25,7 @@ async def get_users(
         statement = statement.where(User.role == role)
     if is_active is not None:
         statement = statement.where(User.is_active == is_active)
-    statement = statement.offset(offset).limit(limit)
+    statement = statement.order_by(desc(User.created_at)).offset(offset).limit(limit)
     result = await session.execute(statement)
     users: List[User] = list(result.scalars().all())
     return users
@@ -85,6 +85,37 @@ async def update_user(session: AsyncSession, db_user: User, user_update: UserUpd
     except IntegrityError:
         await session.rollback()
         raise HTTPException(status_code=400, detail="Update failed due to a constraint violation.")
+
+
+async def update_own_user(
+        session: AsyncSession,
+        db_user: User,
+        user_update: UserUpdateOwn  # Use restricted schema
+) -> User:
+    update_data = user_update.model_dump(exclude_unset=True)
+
+    # Existing security checks
+    new_email = update_data.get("email")
+    if new_email and new_email != db_user.email:
+        normalized_email = str(new_email).lower()
+        result = await session.execute(select(User).where(User.email == normalized_email))
+        existing_user = result.scalar_one_or_none()
+        if existing_user and existing_user.id != db_user.id:
+            raise HTTPException(status_code=400, detail="Email is already in use")
+        update_data["email"] = normalized_email
+
+    # Apply updates
+    for key, value in update_data.items():
+        if key == "password" and value is not None:
+            db_user.hashed_password = hash_password(value)
+        elif key != "password":
+            setattr(db_user, key, value)
+
+    db_user.updated_at = datetime.now(timezone.utc)
+    session.add(db_user)
+    await session.commit()
+    await session.refresh(db_user)
+    return db_user
 
 async def get_user_by_id(session: AsyncSession, user_id: UUID) -> Optional[User]:
     result = await session.execute(select(User).where(User.id == user_id))
