@@ -1,5 +1,5 @@
 # app/api/routes/users.py
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, Query, status, UploadFile, File
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
@@ -9,6 +9,7 @@ from app.models.user import User
 from app.schemas.user import UserRead, UserUpdate, UserCreate, UserUpdateOwn
 from app.core.dependencies import get_current_user, get_session
 from app.models.user_role import UserRole
+from app.services.image_service import validate_image_file, save_image, delete_image, process_user_profile_image_upload
 from app.services.permissions import validate_user_creation_permissions, filter_users_by_role_viewer, \
     validate_user_update_permissions, validate_user_deactivate_reactivate, require_admin_or_senior_editor, \
     require_admin, prevent_self_action
@@ -30,6 +31,15 @@ async def update_own_profile(
     current_user: User = Depends(get_current_user),
 ):
     return await update_own_user(session, current_user, user_update)
+
+@router.post("/me/upload-pic")
+async def upload_user_pic(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+):
+    filename = await process_user_profile_image_upload(file, current_user, session)
+    return {"filename": filename}
 
 @router.post("/create", response_model=UserRead,name="Admin/senior_editor Create User")
 async def create_user_admin_or_senior_editor(

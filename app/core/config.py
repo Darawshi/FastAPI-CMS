@@ -16,9 +16,12 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: str
     SMTP_FROM: str
 
+    IMAGE_UPLOAD_DIR: str
+    MAX_FILE_SIZE_MB: int
+
     SECRET_KEY: str            # added for JWT secret
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60  # default to 60 if not set
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60000  # default to 60 if not set
 
     @property
     def database_url(self) -> str:

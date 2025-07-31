@@ -6,3 +6,4 @@ pydantic~=2.11.7
 aiosmtplib~=4.0.1
 python-jose~=3.5.0
 pydantic-settings~=2.10.1
+pillow~=11.3.0

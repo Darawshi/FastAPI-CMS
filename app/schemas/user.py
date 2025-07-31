@@ -28,6 +28,7 @@ class UserRead(UserBase):
     id: UUID
     created_at: datetime
     updated_at: datetime
+    user_pic: Optional[str]
 
     class Config:
         orm_mode = True

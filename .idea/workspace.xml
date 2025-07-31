@@ -4,14 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1a47017e-a63f-4f54-877a-a9a67d09916d" name="Changes" comment="final">
+    <list default="true" id="1a47017e-a63f-4f54-877a-a9a67d09916d" name="Changes" comment="before image">
+      <change afterPath="$PROJECT_DIR$/app/services/image_service.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/images/users/d55704724db9424ea044d712effaedbe.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/api/routes/users.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/routes/users.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/crud/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/crud/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/core/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/user_role.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user_role.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/schemas/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -147,7 +149,7 @@
       <workItem from="1753784363904" duration="2853000" />
       <workItem from="1753787372112" duration="214000" />
       <workItem from="1753821265375" duration="3369000" />
-      <workItem from="1753954604183" duration="3553000" />
+      <workItem from="1753954604183" duration="13693000" />
     </task>
     <task id="LOCAL-00001" summary="asdf">
       <option name="closed" value="true" />
@@ -221,7 +223,15 @@
       <option name="project" value="LOCAL" />
       <updated>1753824545228</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="before image">
+      <option name="closed" value="true" />
+      <created>1753958350429</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1753958350429</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -244,7 +254,8 @@
     <MESSAGE value="5" />
     <MESSAGE value="amin" />
     <MESSAGE value="final" />
-    <option name="LAST_COMMIT_MESSAGE" value="final" />
+    <MESSAGE value="before image" />
+    <option name="LAST_COMMIT_MESSAGE" value="before image" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/FastAPI_CMS$main.coverage" NAME="main Coverage Results" MODIFIED="1753519631389" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

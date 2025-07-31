@@ -31,6 +31,11 @@ class User(SQLModel, table=True):
         sa_column=Column(DateTime(timezone=True))
     )
 
+    user_pic: Optional[str] = Field(
+        default=None,
+        sa_column=Column(String,unique=True, nullable=True)
+    )
+
     @validates("email")
     def normalize_email(self, _, address):
         return str(address).lower()
