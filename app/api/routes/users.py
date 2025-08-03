@@ -6,10 +6,11 @@ from uuid import UUID
 from app.crud.user import create_user, delete_user_by_id, get_users, update_user_by_id, \
     deactivate_user_by_id, reactivate_user_by_id, get_user_by_id, update_own_user
 from app.models.user import User
+from app.schemas import user
 from app.schemas.user import UserRead, UserUpdate, UserCreate, UserUpdateOwn
 from app.core.dependencies import get_current_user, get_session
 from app.models.user_role import UserRole
-from app.services.image_service import validate_image_file, save_image, delete_image, process_user_profile_image_upload
+from app.services.image_service import  process_user_profile_image_upload
 from app.services.permissions import validate_user_creation_permissions, filter_users_by_role_viewer, \
     validate_user_update_permissions, validate_user_deactivate_reactivate, require_admin_or_senior_editor, \
     require_admin, prevent_self_action, require_admin_or_senior_editor_or_editor
@@ -21,7 +22,6 @@ router = APIRouter()
 async def read_own_profile(
     current_user: User = Depends(get_current_user),
 ):
-    # No need to query the database, current_user is already populated
     return current_user
 
 @router.patch("/me/update", response_model=UserRead,name="Update My Profile")
