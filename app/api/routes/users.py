@@ -48,7 +48,7 @@ async def create_user_admin_or_senior_editor(
         current_user: User = Depends(require_admin_or_senior_editor),
 ):
     validate_user_creation_permissions(current_user, user_create)
-    return await create_user(session, user_create)
+    return await create_user(session, user_create , created_by_id=current_user.id)
 
 @router.get("/all", response_model=List[UserRead],name="Admin/senior_editor List Users")
 async def list_users(

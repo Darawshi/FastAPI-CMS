@@ -2,6 +2,8 @@ from uuid import UUID
 from typing import Optional
 from datetime import datetime
 from pydantic import EmailStr, constr, field_validator
+
+from app.models.user import User
 from app.models.user_role import UserRole
 from sqlmodel import SQLModel
 
@@ -28,6 +30,7 @@ class UserRead(UserBase):
     id: UUID
     created_at: datetime
     updated_at: datetime
+    last_login: Optional[datetime] = None
     user_pic: Optional[str]
 
     class Config:

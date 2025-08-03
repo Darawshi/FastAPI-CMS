@@ -30,7 +30,7 @@ async def get_users(
     users: List[User] = list(result.scalars().all())
     return users
 
-async def create_user(session: AsyncSession, user_create: UserCreate) -> User:
+async def create_user(session: AsyncSession, user_create: UserCreate ,created_by_id: Optional[UUID] = None ) -> User:
     normalized_email = str(user_create.email).lower().strip()  # normalize email
     existing = await get_user_by_email(session, normalized_email)
     if existing:
@@ -41,6 +41,7 @@ async def create_user(session: AsyncSession, user_create: UserCreate) -> User:
         role=user_create.role,
         is_active=user_create.is_active,
         hashed_password=hash_password(user_create.password),
+        created_by_id=created_by_id,  # 🟢 new line
     )
     session.add(db_user)
     try:
