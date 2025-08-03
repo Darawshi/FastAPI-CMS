@@ -12,7 +12,7 @@ from sqlmodel import SQLModel
 class UserBase(SQLModel):
     email: EmailStr
     full_name: Optional[str] = None
-    role: UserRole = UserRole.editor
+    role: UserRole = UserRole.senior_editor
     is_active: bool = True
 
 

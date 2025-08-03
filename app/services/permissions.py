@@ -13,11 +13,22 @@ from app.schemas.user import UserCreate
 
 def validate_user_creation_permissions(current_user: User, new_user: UserCreate):
     if current_user.role == UserRole.senior_editor:
-        if new_user.role not in {UserRole.editor, UserRole.category_editor}:
+        if new_user.role not in {UserRole.senior_editor, UserRole.editor}:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Senior editors can only create editor or category_editor users"
+                detail="Senior editors can only create senior editor or editor users"
             )
+    elif current_user.role == UserRole.editor:
+        if new_user.role not in {UserRole.category_editor}:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Editors can only create category_editor users"
+            )
+    elif current_user.role == UserRole.category_editor:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Category editors cannot create users"
+        )
 def validate_user_update_permissions(current_user: User, target_user: User):
     if current_user.role == UserRole.senior_editor :
         if target_user.role not in {UserRole.editor, UserRole.category_editor}:
@@ -45,6 +56,14 @@ def require_admin_or_senior_editor(current_user: User = Depends(get_current_user
     if current_user.role not in {UserRole.admin, UserRole.senior_editor}:
         raise HTTPException(status_code=403, detail="Admins or Senior Editors only")
     return current_user
+
+
+def require_admin_or_senior_editor_or_editor(current_user: User = Depends(get_current_user)) -> User:
+    if current_user.role not in {UserRole.admin, UserRole.senior_editor, UserRole.editor}:
+        raise HTTPException(status_code=403, detail="Unauthorized access")
+    return current_user
+
+
 def prevent_self_action(current_user: User, target_user_id: UUID):
     if current_user.id == target_user_id:
         raise HTTPException(

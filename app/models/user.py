@@ -16,7 +16,7 @@ class User(SQLModel, table=True):
     )
     hashed_password: str
     full_name: Optional[str] = None
-    role: UserRole = Field(default=UserRole.editor, index=True)
+    role: UserRole = Field(default=UserRole.admin, index=True)
     is_active: bool = Field(default=True, index=True)
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),

@@ -5,12 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1a47017e-a63f-4f54-877a-a9a67d09916d" name="Changes" comment="tt">
+      <change afterPath="$PROJECT_DIR$/migration/versions/ffe09827e59b_initial_migration.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/api/routes/users.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/routes/users.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/crud/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/crud/user.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/schemas/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/migration/versions/859c03f28001_initial_migration.py" beforeDir="false" afterPath="$PROJECT_DIR$/migration/versions/859c03f28001_initial_migration.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/permissions.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/permissions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/migration/versions/859c03f28001_initial_migration.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -149,7 +150,8 @@
       <workItem from="1753954604183" duration="13693000" />
       <workItem from="1754175564762" duration="20000" />
       <workItem from="1754248658811" duration="3674000" />
-      <workItem from="1754252390097" duration="143000" />
+      <workItem from="1754252390097" duration="367000" />
+      <workItem from="1754257345083" duration="4863000" />
     </task>
     <task id="LOCAL-00001" summary="asdf">
       <option name="closed" value="true" />
@@ -239,7 +241,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754213661770</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="tt">
+      <option name="closed" value="true" />
+      <created>1754252748747</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1754252748747</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

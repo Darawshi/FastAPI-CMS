@@ -12,7 +12,7 @@ from app.models.user_role import UserRole
 from app.services.image_service import validate_image_file, save_image, delete_image, process_user_profile_image_upload
 from app.services.permissions import validate_user_creation_permissions, filter_users_by_role_viewer, \
     validate_user_update_permissions, validate_user_deactivate_reactivate, require_admin_or_senior_editor, \
-    require_admin, prevent_self_action
+    require_admin, prevent_self_action, require_admin_or_senior_editor_or_editor
 
 router = APIRouter()
 
@@ -41,14 +41,6 @@ async def upload_user_pic(
     filename = await process_user_profile_image_upload(file, current_user, session)
     return {"filename": filename}
 
-@router.post("/create", response_model=UserRead,name="Admin/senior_editor Create User")
-async def create_user_admin_or_senior_editor(
-        user_create: UserCreate,
-        session: AsyncSession = Depends(get_session),
-        current_user: User = Depends(require_admin_or_senior_editor),
-):
-    validate_user_creation_permissions(current_user, user_create)
-    return await create_user(session, user_create , created_by_id=current_user.id)
 
 @router.get("/all", response_model=List[UserRead],name="Admin/senior_editor List Users")
 async def list_users(
@@ -116,3 +108,13 @@ async def create_first_admin(
         session: AsyncSession = Depends(get_session),
 ):
     return await create_user(session, user_create)
+
+
+@router.post("/create", response_model=UserRead,name="Create User")
+async def add_user(
+        user_create: UserCreate,
+        session: AsyncSession = Depends(get_session),
+        current_user: User = Depends(require_admin_or_senior_editor_or_editor),
+):
+    validate_user_creation_permissions(current_user, user_create)
+    return await create_user(session, user_create , created_by_id=current_user.id)
