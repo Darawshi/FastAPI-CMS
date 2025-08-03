@@ -1,5 +1,6 @@
 fastapi[all]~=0.116.1
 sqlmodel~=0.0.24
+passlib[argon2]
 passlib[bcrypt]~=1.7.4
 SQLAlchemy~=2.0.41
 pydantic~=2.11.7
@@ -7,3 +8,4 @@ aiosmtplib~=4.0.1
 python-jose~=3.5.0
 pydantic-settings~=2.10.1
 pillow~=11.3.0
+asyncpg
