@@ -5,8 +5,8 @@ from sqlalchemy.orm import validates
 from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime, timezone
 from app.models.user_role import UserRole
-from sqlalchemy import Column, DateTime, String
-
+from sqlalchemy import Column, DateTime, String, ForeignKey
+from sqlalchemy.dialects.postgresql import UUID as SqlAlchemyUUID
 
 class User(SQLModel, table=True):
     __tablename__ = "user"
@@ -36,17 +36,19 @@ class User(SQLModel, table=True):
         sa_column=Column(String,unique=True, nullable=True)
     )
 
-    # Add this field to link an editor to their category editor
-    supervisor_id: Optional[UUID] = Field(default=None, foreign_key="user.id")
-
-    # Relationship to supervisor
-    supervisor: Optional["User"] = Relationship(back_populates="subordinates",
-                                                sa_relationship_kwargs={"remote_side": "User.id"})
-
-
-    # Users this user has created
-    users_created: List["User"] = Relationship(back_populates="created_by")
-
+    # Self-referential relationship for tracking who created whom
+    created_by_id: Optional[UUID] = Field(
+        default=None,
+        sa_column=Column(SqlAlchemyUUID(as_uuid=True), ForeignKey("user.id", ondelete="SET NULL"))
+    )
+    created_by: Optional["User"] = Relationship(
+        back_populates="users_created",
+        sa_relationship_kwargs={"remote_side": "User.id"}
+    )
+    users_created: List["User"] = Relationship(
+        back_populates="created_by",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    )
 
     @validates("email")
     def normalize_email(self, _, address):
