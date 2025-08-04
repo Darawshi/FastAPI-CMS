@@ -36,26 +36,22 @@ class UserRead(UserBase):
     class Config:
         orm_mode = True
 
-# Used when updating an existing user
-class UserUpdate(SQLModel):
+
+class UserUpdateBase(SQLModel):
     email: Optional[EmailStr] = None
     full_name: Optional[str] = None
+    password: Optional[constr(min_length=8)] = None
+
+    @field_validator("email")
+    def normalize_email(cls, v: str) -> str:
+        return v.lower().strip() if v else v
+
+class UserUpdateOwn(UserUpdateBase):
+    pass
+
+class UserUpdate(UserUpdateBase):
     role: Optional[UserRole] = None
     is_active: Optional[bool] = None
-    password: Optional[constr(min_length=8)] = None  # 👈 Length validation added
-
-    @field_validator("email")
-    def normalize_email(cls, v: str) -> str:
-        return v.lower().strip() if v else v
-
-class UserUpdateOwn(SQLModel):
-    email: Optional[EmailStr] = None
-    full_name: Optional[str] = None
-    password: Optional[constr(min_length=8)] = None  # 👈 Length validation added
-
-    @field_validator("email")
-    def normalize_email(cls, v: str) -> str:
-        return v.lower().strip() if v else v
 
 # Used internally for authentication (login input)
 class UserLogin(SQLModel):

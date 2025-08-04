@@ -1,10 +1,12 @@
 # app/api/routes/users.py
-from fastapi import APIRouter, Depends, Query, status, UploadFile, File
+from fastapi import APIRouter, Depends, Query, status, UploadFile, File, Form
 from typing import List, Optional
+
+from pydantic import EmailStr, constr
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 from app.crud.user import create_user, delete_user_by_id, get_users, update_user_by_id, \
-    deactivate_user_by_id, reactivate_user_by_id, get_user_by_id, update_own_user
+    deactivate_user_by_id, reactivate_user_by_id, get_user_by_id, update_user
 from app.models.user import User
 from app.schemas.user import UserRead, UserUpdate, UserCreate, UserUpdateOwn
 from app.core.dependencies import get_current_user, get_session
@@ -17,28 +19,72 @@ from app.services.permissions import validate_user_creation_permissions, filter_
 router = APIRouter()
 
 
+@router.post("/first_admin", response_model=UserRead, name="Create First Admin")
+async def create_first_admin(
+        user_create: UserCreate,
+        session: AsyncSession = Depends(get_session),
+):
+    return await create_user(session, user_create)
+
+
+@router.post("/create", response_model=UserRead,name="Create User")
+async def add_user(
+        user_create: UserCreate,
+        session: AsyncSession = Depends(get_session),
+        current_user: User = Depends(require_admin_or_senior_editor_or_editor),
+):
+    validate_user_creation_permissions(current_user, user_create)
+    return await create_user(session, user_create , created_by_id=current_user.id)
 @router.get("/me", response_model=UserRead ,name="Profile")
 async def read_own_profile(
     current_user: User = Depends(get_current_user),
 ):
     return current_user
 
-@router.patch("/me/update", response_model=UserRead,name="Update My Profile")
+@router.patch("/me/update", response_model=UserRead, name="Update My Profile")
 async def update_own_profile(
-    user_update: UserUpdateOwn,
+    email: Optional[EmailStr] = Form(None),
+    full_name: Optional[str] = Form(None),
+    password: Optional[constr(min_length=8)] = Form(None),
+    file: Optional[UploadFile] = File(None),
     session: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
-    return await update_own_user(session, current_user, user_update)
+    # Create schema instance for validation
+    user_update = UserUpdateOwn(email=email, full_name=full_name, password=password)
+    return await update_user(session, current_user, user_update, file)
 
-@router.post("/me/upload-pic")
+
+@router.post("/me/upload-pic", response_model=UserRead)
 async def upload_user_pic(
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
 ):
-    filename = await process_user_profile_image_upload(file, current_user, session)
-    return {"filename": filename}
+    await process_user_profile_image_upload(file, current_user, session)
+    return current_user
+
+
+
+
+
+
+
+
+
+
+
+
+@router.get("/{user_id}", response_model=UserRead, name="Get User by ID")
+async def get_user_by_id_route(
+    user_id: UUID,
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(require_admin_or_senior_editor_or_editor),
+):
+    user = await get_user_by_id(session, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
 
 
 @router.get("/all", response_model=List[UserRead],name="Admin/senior_editor List Users")
@@ -100,20 +146,3 @@ async def reactivate_user(
     target_user = await get_user_by_id(session, user_id)
     validate_user_deactivate_reactivate(current_user, target_user)
     return await reactivate_user_by_id(session, user_id)
-
-@router.post("/first_admin", response_model=UserRead, name="Create First Admin")
-async def create_first_admin(
-        user_create: UserCreate,
-        session: AsyncSession = Depends(get_session),
-):
-    return await create_user(session, user_create)
-
-
-@router.post("/create", response_model=UserRead,name="Create User")
-async def add_user(
-        user_create: UserCreate,
-        session: AsyncSession = Depends(get_session),
-        current_user: User = Depends(require_admin_or_senior_editor_or_editor),
-):
-    validate_user_creation_permissions(current_user, user_create)
-    return await create_user(session, user_create , created_by_id=current_user.id)
