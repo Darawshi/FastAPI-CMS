@@ -6,7 +6,6 @@ from uuid import UUID
 from app.crud.user import create_user, delete_user_by_id, get_users, update_user_by_id, \
     deactivate_user_by_id, reactivate_user_by_id, get_user_by_id, update_own_user
 from app.models.user import User
-from app.schemas import user
 from app.schemas.user import UserRead, UserUpdate, UserCreate, UserUpdateOwn
 from app.core.dependencies import get_current_user, get_session
 from app.models.user_role import UserRole

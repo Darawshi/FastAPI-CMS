@@ -16,8 +16,12 @@ class User(SQLModel, table=True):
     )
     hashed_password: str
     full_name: Optional[str] = None
-    role: UserRole = Field(default=UserRole.admin, index=True)
+    role: UserRole = Field(default=UserRole.editor, index=True)
     is_active: bool = Field(default=True, index=True)
+    last_login: Optional[datetime] = Field(
+        default=None,
+        sa_column=Column(DateTime(timezone=True))
+    )
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
         sa_column=Column(DateTime(timezone=True))
@@ -26,10 +30,7 @@ class User(SQLModel, table=True):
         default_factory=lambda: datetime.now(timezone.utc),
         sa_column=Column(DateTime(timezone=True))
     )
-    last_login: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(DateTime(timezone=True))
-    )
+
     user_pic: Optional[str] = Field(
         default=None,
         sa_column=Column(String,unique=True, nullable=True)
@@ -46,6 +47,7 @@ class User(SQLModel, table=True):
     )
     users_created: List["User"] = Relationship(
         back_populates="created_by",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"}
     )
 
     @validates("email")
