@@ -4,17 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1a47017e-a63f-4f54-877a-a9a67d09916d" name="Changes" comment="tt">
-      <change afterPath="$PROJECT_DIR$/static/images/users/96fe3bfb2114417bac192258a663d861.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/images/users/daf79448ee4b45a0b22cec714d852202.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+    <list default="true" id="1a47017e-a63f-4f54-877a-a9a67d09916d" name="Changes" comment="gg">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/routes/users.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/routes/users.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/crud/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/crud/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/schemas/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/init-fastapi.ps1" beforeDir="false" afterPath="$PROJECT_DIR$/init-fastapi.ps1" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/images/users/47c1fae239bd4b34834cf058ace27499.jpg" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -152,6 +144,7 @@
       <workItem from="1753821265375" duration="3369000" />
       <workItem from="1753954604183" duration="13693000" />
       <workItem from="1754175564762" duration="20000" />
+      <workItem from="1754338807081" duration="60000" />
     </task>
     <task id="LOCAL-00001" summary="asdf">
       <option name="closed" value="true" />
@@ -241,7 +234,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754213661770</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="gg">
+      <option name="closed" value="true" />
+      <created>1754338105919</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1754338105919</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -266,7 +267,8 @@
     <MESSAGE value="final" />
     <MESSAGE value="before image" />
     <MESSAGE value="tt" />
-    <option name="LAST_COMMIT_MESSAGE" value="tt" />
+    <MESSAGE value="gg" />
+    <option name="LAST_COMMIT_MESSAGE" value="gg" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/FastAPI_CMS$main.coverage" NAME="main Coverage Results" MODIFIED="1753519631389" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
