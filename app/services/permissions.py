@@ -3,6 +3,7 @@ from typing import List
 from uuid import UUID
 
 from fastapi import HTTPException, status, Depends
+from sqlalchemy import case, and_, true, ColumnElement, false
 
 from app.core.dependencies import get_current_user
 from app.models.user import User
@@ -63,6 +64,11 @@ def require_admin_or_senior_editor_or_editor(current_user: User = Depends(get_cu
         raise HTTPException(status_code=403, detail="Unauthorized access")
     return current_user
 
+def require_admin_or_senior_editor_or_editor_or_category_editor(current_user: User = Depends(get_current_user)) -> User:
+    if current_user.role not in {UserRole.admin, UserRole.senior_editor, UserRole.editor , UserRole.category_editor}:
+        raise HTTPException(status_code=403, detail="Unauthorized access")
+    return current_user
+
 
 def prevent_self_action(current_user: User, target_user_id: UUID):
     if current_user.id == target_user_id:
@@ -70,3 +76,70 @@ def prevent_self_action(current_user: User, target_user_id: UUID):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="You cannot perform this action on your own account.",
         )
+
+
+def get_user_visibility_condition(current_user: User) -> ColumnElement[bool]:
+    """Returns SQLAlchemy condition for user visibility based on role"""
+    if current_user.role == UserRole.admin:
+        return true()  # SQLAlchemy "true" condition
+
+    elif current_user.role == UserRole.senior_editor:
+        return User.role.in_([# type: ignore
+            UserRole.senior_editor,
+            UserRole.editor,
+            UserRole.category_editor
+        ])
+
+    elif current_user.role == UserRole.editor:
+        return and_(
+            User.role == UserRole.category_editor,
+            User.created_by_id == current_user.id
+        )
+
+    elif current_user.role == UserRole.category_editor:
+        return and_(
+            User.role == UserRole.category_editor,
+            User.created_by_id == current_user.created_by_id
+        )
+
+    else:
+        return false()  # SQLAlchemy "false" condition
+
+def user_has_permission(current_user: User, target_user: User) -> bool:
+    """Checks if current user can view target user"""
+    if current_user.role == UserRole.admin:
+        return True
+
+    elif current_user.role == UserRole.senior_editor:
+        return target_user.role in [
+            UserRole.senior_editor,
+            UserRole.editor,
+            UserRole.category_editor
+        ]
+
+    elif current_user.role == UserRole.editor:
+        return (
+                target_user.role == UserRole.category_editor and
+                target_user.created_by_id == current_user.id
+        )
+
+    elif current_user.role == UserRole.category_editor:
+        return (
+                target_user.role == UserRole.category_editor and
+                target_user.created_by_id == current_user.created_by_id
+        )
+
+    return False # No access for other roles
+
+
+def get_role_order() -> case:
+    """Returns case statement for role-based ordering"""
+    return case(
+        {
+            UserRole.admin: 0,
+            UserRole.senior_editor: 1,
+            UserRole.editor: 2,
+            UserRole.category_editor: 3
+        },
+        value=User.role
+    )

@@ -1,10 +1,10 @@
 from datetime import datetime, timezone
 from typing import Optional, List
 from uuid import UUID
-from sqlalchemy import select
+from sqlalchemy import select, case
 from fastapi import HTTPException, UploadFile
 from sqlalchemy.exc import IntegrityError
-from sqlmodel import select, desc
+from sqlmodel import select
 from app.models.user import User
 from app.models.user_role import UserRole
 from app.schemas.user import UserCreate, UserUpdate, UserUpdateBase
@@ -12,23 +12,71 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.security import hash_password
 from app.services.image_service import process_user_profile_image_upload
 
+from fastapi import status
+
 
 async def get_users(
-    session: AsyncSession,
-    offset: int = 0,
-    limit: int = 10,
-    role: Optional[UserRole] = None,
-    is_active: Optional[bool] = None,
+        session: AsyncSession,
+        current_user: User,
+        offset: int = 0,
+        limit: int = 20,
+        role: Optional[UserRole] = None,
+        is_active: Optional[bool] = None,
 ) -> List[User]:
-    statement = select(User)
+    stmt = select(User)
+
+    # Role-based restrictions (enforced at DB level)
+    if current_user.role == UserRole.admin:
+        pass  # Admin sees all
+    elif current_user.role == UserRole.senior_editor:
+        # senior_editor: sees all except admin
+        stmt = stmt.where(User.role.in_([# type: ignore
+            UserRole.senior_editor,
+            UserRole.editor,
+            UserRole.category_editor
+        ]))
+    elif current_user.role == UserRole.editor:
+        # EDITOR: Only sees Category Editors they created
+        stmt = stmt.where(
+            (User.role == UserRole.category_editor) &
+            (User.created_by_id == current_user.id)
+        )
+    elif current_user.role == UserRole.category_editor:
+        # CATEGORY EDITOR: Only sees siblings with same parent Editor
+        stmt = stmt.where(
+            (User.role == UserRole.category_editor) &
+            (User.created_by_id == current_user.created_by_id)
+        )
+    else:
+        # CRITICAL SECURITY FALLBACK
+        # Should never be reached due to route dependency, but essential defense-in-depth
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Insufficient permissions"
+        )
+
+    # Apply optional filters
     if role is not None:
-        statement = statement.where(User.role == role)
+        stmt = stmt.where(User.role == role)
     if is_active is not None:
-        statement = statement.where(User.is_active == is_active)
-    statement = statement.order_by(desc(User.created_at)).offset(offset).limit(limit)
-    result = await session.execute(statement)
-    users: List[User] = list(result.scalars().all())
-    return users
+        stmt = stmt.where(User.is_active == is_active)
+
+    role_order = case(
+        {
+            UserRole.admin: 0,
+            UserRole.senior_editor: 1,
+            UserRole.editor: 2,
+            UserRole.category_editor: 3
+        },
+        value=User.role
+    )
+    # Order and paginate
+    stmt = stmt.order_by(role_order).offset(offset).limit(limit)
+
+    result = await session.execute(stmt)
+    if not result:
+        raise HTTPException(status_code=404, detail="User not found")
+    return list(result.scalars().all())
 
 async def create_user(session: AsyncSession, user_create: UserCreate ,created_by_id: Optional[UUID] = None ) -> User:
     normalized_email = str(user_create.email).lower().strip()  # normalize email
@@ -50,13 +98,14 @@ async def create_user(session: AsyncSession, user_create: UserCreate ,created_by
         return db_user
     except IntegrityError:
         await session.rollback()
-        raise HTTPException(status_code=400, detail="Email already registered")
+        raise HTTPException(status_code=400, detail="Create failed due to a constraint violation.")
 
 async def update_user(
         session: AsyncSession,
         db_user: User,
         user_update: UserUpdateBase,
         file: Optional[UploadFile] = None) -> User:
+
     update_data = user_update.model_dump(exclude_unset=True, exclude_none=True)
 
     # Check for email conflict
@@ -96,12 +145,56 @@ async def update_user(
         raise HTTPException(status_code=400, detail="Update failed due to a constraint violation.")
 
 
-async def get_user_by_id(session: AsyncSession, user_id: UUID) -> Optional[User]:
+async def get_user_by_id(session: AsyncSession,current_user: User, user_id: UUID) -> Optional[User]:
+    # Fetch the requested user
     stmt = select(User).where(User.id == user_id)
     result = await session.execute(stmt)
     user = result.scalar_one_or_none()
+
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with ID {user_id} not found"
+        )
+
+    # Apply visibility rules
+    if current_user.role == UserRole.admin:
+        pass  # Admin sees all users
+    elif current_user.role == UserRole.senior_editor:
+        if user.role not in [
+            UserRole.senior_editor,
+            UserRole.editor,
+            UserRole.category_editor
+        ]:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+    elif current_user.role == UserRole.editor:
+        if not (
+                user.role == UserRole.category_editor and
+                user.created_by_id == current_user.id
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+    elif current_user.role == UserRole.category_editor:
+        if not (
+                user.role == UserRole.category_editor and
+                user.created_by_id == current_user.created_by_id
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+    else:
+        # Should never reach due to route dependency
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Insufficient permissions"
+        )
+
     return user
 
 

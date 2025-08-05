@@ -12,9 +12,10 @@ from app.schemas.user import UserRead, UserUpdate, UserCreate, UserUpdateOwn
 from app.core.dependencies import get_current_user, get_session
 from app.models.user_role import UserRole
 from app.services.image_service import  process_user_profile_image_upload
-from app.services.permissions import validate_user_creation_permissions, filter_users_by_role_viewer, \
+from app.services.permissions import validate_user_creation_permissions,  \
     validate_user_update_permissions, validate_user_deactivate_reactivate, require_admin_or_senior_editor, \
-    require_admin, prevent_self_action, require_admin_or_senior_editor_or_editor
+    require_admin, prevent_self_action, require_admin_or_senior_editor_or_editor, \
+    require_admin_or_senior_editor_or_editor_or_category_editor
 
 router = APIRouter()
 
@@ -64,41 +65,38 @@ async def upload_user_pic(
     await process_user_profile_image_upload(file, current_user, session)
     return current_user
 
-
-
-
-
-
-
-
-
-
-
-
-@router.get("/{user_id}", response_model=UserRead, name="Get User by ID")
-async def get_user_by_id_route(
-    user_id: UUID,
-    session: AsyncSession = Depends(get_session),
-    current_user: User = Depends(require_admin_or_senior_editor_or_editor),
-):
-    user = await get_user_by_id(session, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
-
-
-@router.get("/all", response_model=List[UserRead],name="Admin/senior_editor List Users")
+@router.get("/all", response_model=List[UserRead], name="Users List")
 async def list_users(
     offset: int = Query(0, ge=0),
-    limit: int = Query(10, ge=1, le=100),
+    limit: int = Query(20, ge=1, le=100),
     role: Optional[UserRole] = None,
     is_active: Optional[bool] = None,
     session: AsyncSession = Depends(get_session),
-    current_user: User = Depends(require_admin_or_senior_editor),
+    current_user: User = Depends(require_admin_or_senior_editor_or_editor_or_category_editor),
 ):
-    users = await get_users(session, offset, limit, role, is_active)
-    users = filter_users_by_role_viewer(current_user, users)
-    return users
+    users= await get_users(  # Directly return filtered/paginated results
+        session=session,
+        current_user=current_user,
+        offset=offset,
+        limit=limit,
+        role=role,
+        is_active=is_active
+    )
+    return  users
+
+@router.get("/{user_id}", response_model=UserRead)
+async def fetch_user_by_id(
+    user_id: UUID,
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(require_admin_or_senior_editor_or_editor_or_category_editor),
+):
+    user = await get_user_by_id(session,current_user, user_id)
+    return user
+
+
+
+
+
 
 @router.patch("/{user_id}", response_model=UserRead , name="Admin Update User")
 async def update_user_admin(
@@ -107,7 +105,7 @@ async def update_user_admin(
     session: AsyncSession = Depends(get_session),
     current_user: User = Depends(require_admin_or_senior_editor),
 ):
-    target_user = await get_user_by_id(session, user_id)
+    target_user = await get_user_by_id(session,current_user, user_id)
     validate_user_update_permissions(current_user, target_user)
     return await update_user_by_id(session, user_id, user_update)
 
@@ -129,7 +127,7 @@ async def deactivate_user(
     # Prevent self-deactivation
     prevent_self_action(current_user, user_id)
     # Fetch user to deactivate
-    target_user = await get_user_by_id(session, user_id)
+    target_user = await get_user_by_id(session, current_user,user_id)
     validate_user_deactivate_reactivate(current_user, target_user)
     # Deactivate
     return await deactivate_user_by_id(session, user_id)
@@ -143,6 +141,6 @@ async def reactivate_user(
     # Prevent self-reactivate
     prevent_self_action(current_user, user_id)
     # Fetch user to reactivate
-    target_user = await get_user_by_id(session, user_id)
+    target_user = await get_user_by_id(session,current_user, user_id)
     validate_user_deactivate_reactivate(current_user, target_user)
     return await reactivate_user_by_id(session, user_id)
