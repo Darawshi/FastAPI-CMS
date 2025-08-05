@@ -1,4 +1,5 @@
 # app/crud/auth.py
+from pydantic import EmailStr
 from sqlmodel import select
 from app.core.email_utils import send_email
 from sqlalchemy import select
@@ -16,8 +17,8 @@ from app.core.security import (
 )
 
 
-async def authenticate_user(email: str, password: str, session: AsyncSession):
-    normalized_email = email.lower().strip()
+async def authenticate_user(email: EmailStr, password: str, session: AsyncSession):
+    normalized_email = str(email).lower().strip()
     result = await session.execute(select(User).where(User.email == normalized_email))
     user = result.scalars().first()
 
@@ -35,8 +36,8 @@ async def authenticate_user(email: str, password: str, session: AsyncSession):
     return {"access_token": token, "token_type": "bearer"}
 
 
-async def send_reset_password_token(email: str, session: AsyncSession):
-    normalized_email = email.lower().strip()
+async def send_reset_password_token(email: EmailStr, session: AsyncSession):
+    normalized_email = str(email).lower().strip()
     result = await session.execute(select(User).where(User.email == normalized_email))
     user = result.scalars().first()
     if not user:
