@@ -13,8 +13,8 @@ from app.core.dependencies import get_current_user, get_session
 from app.models.user_role import UserRole
 from app.services.image_service import  process_user_profile_image_upload
 from app.services.permissions import validate_user_creation_permissions,  \
-    validate_user_update_permissions, validate_user_deactivate_reactivate, require_admin_or_senior_editor, \
-    require_admin, prevent_self_action, require_admin_or_senior_editor_or_editor, \
+    validate_user_update_permissions, validate_user_deactivate_reactivate, \
+    prevent_self_action, require_admin_or_senior_editor_or_editor, \
     require_admin_or_senior_editor_or_editor_or_category_editor
 
 router = APIRouter()
@@ -101,23 +101,22 @@ async def delete_user(
     prevent_self_action(current_user, user_id)
     await delete_user_by_id(session,current_user, user_id)
 
-
-@router.patch("/{user_id}", response_model=UserRead , name="Admin Update User")
+@router.patch("/{user_id}", response_model=UserRead , name="Update User by ID")
 async def update_user_admin(
     user_id: UUID,
     user_update: UserUpdate,
     session: AsyncSession = Depends(get_session),
-    current_user: User = Depends(require_admin_or_senior_editor),
+    current_user: User = Depends(require_admin_or_senior_editor_or_editor),
 ):
     target_user = await get_user_by_id(session,current_user, user_id)
     validate_user_update_permissions(current_user, target_user)
     return await update_user_by_id(session, user_id, user_update)
 
-@router.post("/deactivate/{user_id}", response_model=UserRead,name="Admin Deactivate User")
+@router.post("/deactivate/{user_id}", response_model=UserRead,name="Deactivate User")
 async def deactivate_user(
     user_id: UUID,
     session: AsyncSession = Depends(get_session),
-    current_user: User = Depends(require_admin_or_senior_editor),
+    current_user: User = Depends(require_admin_or_senior_editor_or_editor),
 ):
     # Prevent self-deactivation
     prevent_self_action(current_user, user_id)
@@ -127,11 +126,11 @@ async def deactivate_user(
     # Deactivate
     return await deactivate_user_by_id(session, user_id)
 
-@router.post("/reactivate/{user_id}", response_model=UserRead,name="Admin Reactivate User")
+@router.post("/reactivate/{user_id}", response_model=UserRead,name="Reactivate User")
 async def reactivate_user(
     user_id: UUID,
     session: AsyncSession = Depends(get_session),
-    current_user: User = Depends(require_admin_or_senior_editor),
+    current_user: User = Depends(require_admin_or_senior_editor_or_editor),
 ):
     # Prevent self-reactivate
     prevent_self_action(current_user, user_id)

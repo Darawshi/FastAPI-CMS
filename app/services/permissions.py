@@ -3,7 +3,8 @@ from typing import List
 from uuid import UUID
 
 from fastapi import HTTPException, status, Depends
-from sqlalchemy import case, and_, true, ColumnElement, false
+from sqlalchemy import case, and_, true, ColumnElement
+from sqlalchemy.sql.elements import Case
 
 from app.core.dependencies import get_current_user
 from app.models.user import User
@@ -96,14 +97,12 @@ def get_user_visibility_condition(current_user: User) -> ColumnElement[bool]:
             User.created_by_id == current_user.id
         )
 
-    elif current_user.role == UserRole.category_editor:
+    else:  # This handles UserRole.category_editor and any unknown roles
         return and_(
-            User.role == UserRole.category_editor,
+             current_user.role == UserRole.category_editor,
+             User.role == UserRole.category_editor,
             User.created_by_id == current_user.created_by_id
         )
-
-    else:
-        return false()  # SQLAlchemy "false" condition
 
 def user_has_permission(current_user: User, target_user: User) -> bool:
     """Checks if current user can view target user"""
@@ -122,17 +121,15 @@ def user_has_permission(current_user: User, target_user: User) -> bool:
                 target_user.role == UserRole.category_editor and
                 target_user.created_by_id == current_user.id
         )
-
-    elif current_user.role == UserRole.category_editor:
+    else:  # This handles UserRole.category_editor and any unknown roles
         return (
-                target_user.role == UserRole.category_editor and
-                target_user.created_by_id == current_user.created_by_id
+            current_user.role == UserRole.category_editor and
+            target_user.role == UserRole.category_editor and
+            target_user.created_by_id == current_user.created_by_id
         )
 
-    return False # No access for other roles
 
-
-def get_role_order() -> case:
+def get_role_order() -> Case:
     """Returns case statement for role-based ordering"""
     return case(
         {
