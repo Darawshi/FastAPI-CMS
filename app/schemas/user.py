@@ -33,8 +33,9 @@ class UserRead(UserBase):
     last_login: Optional[datetime] = None
     user_pic: Optional[str]
 
-    class Config:
-        orm_mode = True
+    model_config = {
+        "from_attributes": True
+    }
 
 
 class UserUpdateBase(SQLModel):

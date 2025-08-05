@@ -3,7 +3,7 @@ from typing import Optional, List
 from uuid import UUID
 from sqlalchemy import select
 from fastapi import HTTPException, UploadFile
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlmodel import select
 from app.models.user import User
 from app.models.user_role import UserRole
@@ -130,12 +130,44 @@ async def update_user_by_id(session: AsyncSession,user_id: UUID,user_update: Use
         raise HTTPException(status_code=404, detail="User not found")
     return await update_user(session, user, user_update) # type: ignore
 
-async def delete_user_by_id(session: AsyncSession, user_id: UUID) -> None:
-    user = await session.get(User, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    await session.delete(user)
-    await session.commit()
+async def delete_user_by_id(session: AsyncSession, current_user: User, user_id: UUID) -> None:
+    try:
+        # Get visibility condition (same as in GET "all" route)
+        visibility_condition = get_user_visibility_condition(current_user)
+
+        # Create select query with visibility filter
+        stmt = (
+            select(User)
+            .where(User.id == user_id)
+            .where(visibility_condition)
+        )
+
+        # Execute query
+        result = await session.execute(stmt)
+        user = result.scalar_one_or_none()
+
+        if not user:
+            # Maintain 404 for consistency - don't reveal existence of hidden users
+            raise HTTPException(status_code=404, detail="User not found")
+
+        await session.delete(user)
+        await session.commit()
+
+    except IntegrityError as e:
+        # Handle constraint violations specifically
+        await session.rollback()
+        raise HTTPException(
+            status_code=409,
+            detail="Cannot delete user due to related resources"
+        ) from e
+
+    except SQLAlchemyError as e:
+        # General database failures
+        await session.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail="Database error while deleting user"
+        ) from e
 
 async def set_user_active_status(session: AsyncSession,user_id: UUID,is_active: bool) -> User:
     user = await session.get(User, user_id)

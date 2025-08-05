@@ -92,6 +92,16 @@ async def fetch_user_by_id(
     user = await get_user_by_id(session,current_user, user_id)
     return user
 
+@router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT,name="Admin Delete User")
+async def delete_user(
+    user_id: UUID,
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(require_admin_or_senior_editor_or_editor),
+):
+    prevent_self_action(current_user, user_id)
+    await delete_user_by_id(session,current_user, user_id)
+
+
 @router.patch("/{user_id}", response_model=UserRead , name="Admin Update User")
 async def update_user_admin(
     user_id: UUID,
@@ -102,15 +112,6 @@ async def update_user_admin(
     target_user = await get_user_by_id(session,current_user, user_id)
     validate_user_update_permissions(current_user, target_user)
     return await update_user_by_id(session, user_id, user_update)
-
-@router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT,name="Admin Delete User")
-async def delete_user(
-    user_id: UUID,
-    session: AsyncSession = Depends(get_session),
-    current_user: User = Depends(require_admin),
-):
-    prevent_self_action(current_user, user_id)
-    await delete_user_by_id(session, user_id)
 
 @router.post("/deactivate/{user_id}", response_model=UserRead,name="Admin Deactivate User")
 async def deactivate_user(
