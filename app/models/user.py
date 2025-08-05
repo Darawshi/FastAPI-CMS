@@ -47,7 +47,7 @@ class User(SQLModel, table=True):
     )
     users_created: List["User"] = Relationship(
         back_populates="created_by",
-        sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+        sa_relationship_kwargs={"cascade": "save-update, merge"}
     )
 
     @validates("email")

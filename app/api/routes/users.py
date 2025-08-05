@@ -27,7 +27,6 @@ async def create_first_admin(
 ):
     return await create_user(session, user_create)
 
-
 @router.post("/create", response_model=UserRead,name="Create User")
 async def add_user(
         user_create: UserCreate,
@@ -36,6 +35,7 @@ async def add_user(
 ):
     validate_user_creation_permissions(current_user, user_create)
     return await create_user(session, user_create , created_by_id=current_user.id)
+
 @router.get("/me", response_model=UserRead ,name="Profile")
 async def read_own_profile(
     current_user: User = Depends(get_current_user),
@@ -55,8 +55,7 @@ async def update_own_profile(
     user_update = UserUpdateOwn(email=email, full_name=full_name, password=password)
     return await update_user(session, current_user, user_update, file)
 
-
-@router.post("/me/upload-pic", response_model=UserRead)
+@router.post("/me/upload-pic", response_model=UserRead, name="upload profile picture")
 async def upload_user_pic(
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user),
@@ -84,7 +83,7 @@ async def list_users(
     )
     return  users
 
-@router.get("/{user_id}", response_model=UserRead)
+@router.get("/{user_id}", response_model=UserRead, name="Users by ID")
 async def fetch_user_by_id(
     user_id: UUID,
     session: AsyncSession = Depends(get_session),
@@ -92,11 +91,6 @@ async def fetch_user_by_id(
 ):
     user = await get_user_by_id(session,current_user, user_id)
     return user
-
-
-
-
-
 
 @router.patch("/{user_id}", response_model=UserRead , name="Admin Update User")
 async def update_user_admin(
