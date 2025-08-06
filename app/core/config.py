@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: str
     SMTP_FROM: str
 
+    RESET_LINK_BASE: str
+    RESET_TOKEN_LIFETIME_MINUTES: int   # default to 60
+
     IMAGE_UPLOAD_DIR: str
     MAX_FILE_SIZE_MB: int
 

@@ -1,8 +1,13 @@
+import re
+
 from fastapi import HTTPException
 from passlib.context import CryptContext
 from jose import JWTError, jwt, ExpiredSignatureError
 from datetime import datetime, timedelta, timezone
 from typing import Optional
+
+from starlette.status import HTTP_400_BAD_REQUEST
+
 from app.core.config import get_settings
 
 settings = get_settings()
@@ -18,6 +23,7 @@ __all__ = [
     "verify_password",
     "create_access_token",
     "decode_access_token",
+    "validate_password_strength",
 ]
 
 
@@ -44,3 +50,35 @@ def decode_access_token(token: str) -> Optional[dict]:
         raise HTTPException(status_code=401, detail="Token expired")
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
+
+
+def validate_password_strength(password: str):
+    if len(password) < 8:
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST,
+            detail="Password must be at least 8 characters long.",
+        )
+
+    if not re.search(r"[A-Z]", password):
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST,
+            detail="Password must contain at least one uppercase letter.",
+        )
+
+    if not re.search(r"[a-z]", password):
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST,
+            detail="Password must contain at least one lowercase letter.",
+        )
+
+    if not re.search(r"\d", password):
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST,
+            detail="Password must contain at least one digit.",
+        )
+
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST,
+            detail="Password must contain at least one special character.",
+        )

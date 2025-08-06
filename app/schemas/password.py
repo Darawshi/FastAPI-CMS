@@ -1,8 +1,8 @@
 from pydantic import BaseModel, EmailStr, constr
 
-class ForgotPasswordRequest(BaseModel):
+class PasswordResetRequest(BaseModel):
     email: EmailStr
 
-class ResetPasswordRequest(BaseModel):
+class PasswordResetConfirm(BaseModel):
     token: str
     new_password: constr(min_length=8)

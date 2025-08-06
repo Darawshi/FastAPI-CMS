@@ -1,19 +1,22 @@
 # app/main.py
-
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-
 from app.core.database import init_db
 from app.api.routes import auth ,users
+from app.tasks.scheduler import start_scheduler, shutdown_scheduler
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await init_db()  # replaces deprecated @app.on_event("startup")
-    yield
-    # Optional: add shutdown logic here
+    # ✅ Startup logic
+    await init_db()
+    start_scheduler()
 
+    yield  # 👈 Only one yield allowed!
+
+    # ✅ Shutdown logic
+    shutdown_scheduler()
 app = FastAPI(title="CMS Backend", lifespan=lifespan)
-
 # Routers
 app.include_router(auth.router,prefix="/auth", tags=["auth"])
 app.include_router(users.router, prefix="/user", tags=["users"])

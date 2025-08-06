@@ -4,6 +4,8 @@ from pydantic import EmailStr
 from sqlalchemy.orm import validates
 from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime, timezone
+
+from app.models.password_reset_token import PasswordResetToken
 from app.models.user_role import UserRole
 from sqlalchemy import Column, DateTime, String, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID as SqlAlchemyUUID
@@ -50,6 +52,10 @@ class User(SQLModel, table=True):
         sa_relationship_kwargs={"cascade": "save-update, merge"}
     )
 
+    # Inside User class:
+    reset_tokens: List["PasswordResetToken"] = Relationship(
+        back_populates="user"
+    )
     @validates("email")
     def normalize_email(self, _, address):
         return str(address).lower()

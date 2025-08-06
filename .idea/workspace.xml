@@ -4,8 +4,28 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1a47017e-a63f-4f54-877a-a9a67d09916d" name="Changes" comment="user done">
+    <list default="true" id="1a47017e-a63f-4f54-877a-a9a67d09916d" name="Changes" comment="all/i">
+      <change afterPath="$PROJECT_DIR$/app/models/password_reset_token.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/auth/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/auth/rate_limiter.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/auth/token_cleanup.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/tasks/scheduler.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/migration/versions/1f5ab3dbe95e_add_password_reset_token_table.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/FastAPI-CMS.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/FastAPI-CMS.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/routes/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/routes/auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/core/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/core/email_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/email_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/core/security.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/security.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/crud/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/crud/auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/crud/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/crud/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/schemas/password.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/password.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/auth/auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,14 +51,11 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/Darawshi/FastAPI-CMS.git&quot;,
-    &quot;accountId&quot;: &quot;47b7dec7-3242-416f-b083-8455198398c1&quot;
+    &quot;accountId&quot;: &quot;3f435d10-3195-40ac-80d2-55df9ecd3565&quot;
   }
 }</component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
-  </component>
-  <component name="ProblemsViewState">
-    <option name="selectedTabId" value="AISelfReview" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
@@ -58,21 +75,21 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Bassam/PycharmProjects/FastAPI-CMS&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Bassam\PycharmProjects\FastAPI-CMS\app\services\auth" />
       <recent name="C:\Users\Bassam\PycharmProjects\FastAPI-CMS" />
       <recent name="C:\Users\USER-Q\Desktop\FastAPI-CMS\FastAPI-CMS\app\api\routes" />
     </key>
@@ -105,8 +122,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-e03c56caf84a-JavaScript-PY-252.23892.439" />
-        <option value="bundled-python-sdk-b3ae9b5d7125-f0eec537fc84-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.23892.439" />
+        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-PY-251.26927.90" />
+        <option value="bundled-python-sdk-41e8cd69c857-64d779b69b7a-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.26927.90" />
       </set>
     </attachedChunks>
   </component>
@@ -151,9 +168,7 @@
       <workItem from="1754338807081" duration="724000" />
       <workItem from="1754342874258" duration="11537000" />
       <workItem from="1754357193137" duration="3887000" />
-      <workItem from="1754371929582" duration="13073000" />
-      <workItem from="1754385192448" duration="69000" />
-      <workItem from="1754385438848" duration="2215000" />
+      <workItem from="1754442856615" duration="3564000" />
     </task>
     <task id="LOCAL-00001" summary="asdf">
       <option name="closed" value="true" />
@@ -283,39 +298,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754360689792</updated>
     </task>
-    <task id="LOCAL-00017" summary="user delete">
+    <task id="LOCAL-00017" summary="nvn">
       <option name="closed" value="true" />
-      <created>1754374857523</created>
+      <created>1754444506021</created>
       <option name="number" value="00017" />
       <option name="presentableId" value="LOCAL-00017" />
       <option name="project" value="LOCAL" />
-      <updated>1754374857523</updated>
+      <updated>1754444506021</updated>
     </task>
-    <task id="LOCAL-00018" summary="user done">
-      <option name="closed" value="true" />
-      <created>1754384677246</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1754384677246</updated>
-    </task>
-    <task id="LOCAL-00019" summary="user done">
-      <option name="closed" value="true" />
-      <created>1754384916520</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1754384916520</updated>
-    </task>
-    <task id="LOCAL-00020" summary="user done">
-      <option name="closed" value="true" />
-      <created>1754386058290</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1754386058290</updated>
-    </task>
-    <option name="localTasksCounter" value="21" />
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -342,9 +333,8 @@
     <MESSAGE value="tt" />
     <MESSAGE value="gg" />
     <MESSAGE value="all/i" />
-    <MESSAGE value="user delete" />
-    <MESSAGE value="user done" />
-    <option name="LAST_COMMIT_MESSAGE" value="user done" />
+    <MESSAGE value="nvn" />
+    <option name="LAST_COMMIT_MESSAGE" value="nvn" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/FastAPI_CMS$main.coverage" NAME="main Coverage Results" MODIFIED="1753519631389" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

@@ -121,9 +121,7 @@ async def update_user(session: AsyncSession,db_user: User,user_update: UserUpdat
 async def get_user_by_email(session: AsyncSession, email: str) -> Optional[User]:
     normalized_email = email.lower().strip()
     result = await session.execute(select(User).where(User.email == normalized_email))
-    user =result.scalars().first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+    user =result.scalar_one_or_none()
     return user
 
 async def delete_user_by_id(session: AsyncSession, current_user: User, user_id: UUID) -> None:
