@@ -12,3 +12,6 @@ async def delete_expired_tokens(session: AsyncSession) -> Callable[[], int]:
     await session.commit()
 
     return result.rowcount  # ✅ This is an intis is an int
+
+
+

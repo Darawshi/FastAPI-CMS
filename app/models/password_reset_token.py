@@ -7,7 +7,7 @@ from sqlalchemy import Column, DateTime
 from uuid import uuid4, UUID
 from sqlmodel import SQLModel, Field, Relationship
 if TYPE_CHECKING:
-    from app.models.user import User  # ✅ Import only for type checking
+    from app.models.user import User  # Avoid circular import
 
 
 

@@ -11,13 +11,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime, timezone, timedelta
 from fastapi import HTTPException, status
 
+from app.crud.user import get_user_by_email
 from app.models.password_reset_token import PasswordResetToken
 from app.models.user import User
 from app.core.security import (
     verify_password,
     hash_password,
     create_access_token,
-    decode_access_token, validate_password_strength,
+    validate_password_strength,
 )
 from app.services.auth.rate_limiter import can_request_reset, mark_reset_requested
 
@@ -50,8 +51,7 @@ async def send_reset_password_token(email: EmailStr, session: AsyncSession):
     normalized_email = str(email).lower().strip()
     if not await can_request_reset(normalized_email):
         raise HTTPException(status_code=429, detail="Too many password reset requests. Please wait before retrying.")
-    result = await session.execute(select(User).where(User.email == normalized_email))
-    user = result.scalar_one_or_none()
+    user = await get_user_by_email( session ,normalized_email)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
