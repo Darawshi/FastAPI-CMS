@@ -19,6 +19,7 @@ class User(SQLModel, table=True):
     full_name: Optional[str] = None
     role: UserRole = Field(default=UserRole.editor, index=True)
     is_active: bool = Field(default=True, index=True)
+    must_change_password: bool = Field(default=False)
     last_login: Optional[datetime] = Field(
         default=None,
         sa_column=Column(DateTime(timezone=True))

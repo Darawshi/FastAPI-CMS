@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     DB_USER: str
     DB_PASSWORD: str
 
+    ONE_TIME_PASSWORD: str
+
     SMTP_HOST: str
     SMTP_PORT: int
     SMTP_USER: str
