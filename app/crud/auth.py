@@ -37,6 +37,11 @@ async def authenticate_user(email: EmailStr, password: str, session: AsyncSessio
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials",
         )
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User is inactive. Please contact support.",
+        )
     if user.must_change_password:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Password reset required. Please change your password.")
 
@@ -96,9 +101,9 @@ async def change_password_after_reset(new_password: str,current_user: User, sess
     validate_password_strength(new_password)
     user = await get_user_by_id(session, current_user, current_user.id)
     user.hashed_password = hash_password(new_password)
+    current_user.must_change_password = False
     # Delete all reset tokens for this user
     await session.execute(delete(PasswordResetToken).where(PasswordResetToken.user_id == user.id))# type: ignore
-
     await session.commit()
     return {"message": "Password reset successful"}
 async def get_user_by_reset_token(token: str, session: AsyncSession) -> User | None:
