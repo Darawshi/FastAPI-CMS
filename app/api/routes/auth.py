@@ -1,3 +1,6 @@
+# app/api/routes/auth.py
+# This module defines the authentication routes for user login and password reset functionality.
+
 from fastapi import APIRouter, Depends
 from sqlmodel.ext.asyncio.session import AsyncSession
 from typing import AsyncGenerator
@@ -6,9 +9,7 @@ from app.schemas.user import UserLogin
 from app.schemas.password import PasswordResetRequest, PasswordResetConfirm
 from app.core.database import async_session
 
-
 router = APIRouter()
-
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:

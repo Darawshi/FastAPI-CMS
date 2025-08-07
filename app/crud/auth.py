@@ -1,16 +1,13 @@
 # app/crud/auth.py
 import secrets
-
 from pydantic import EmailStr
 from sqlmodel import select
-
 from app.core.config import get_settings
 from app.core.email_utils import send_email
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime, timezone, timedelta
 from fastapi import HTTPException, status
-
 from app.crud.user import get_user_by_email
 from app.models.password_reset_token import PasswordResetToken
 from app.models.user import User
@@ -56,7 +53,7 @@ async def send_reset_password_token(email: EmailStr, session: AsyncSession):
         raise HTTPException(status_code=404, detail="User not found")
 
     # Generate secure token
-    token = secrets.token_urlsafe(32)
+    token = secrets.token_urlsafe(48)
     expires_at = datetime.now(timezone.utc) + timedelta(minutes=RESET_TOKEN_LIFETIME_MINUTES)
     # Save token in DB
     reset_token = PasswordResetToken(
@@ -76,6 +73,7 @@ async def send_reset_password_token(email: EmailStr, session: AsyncSession):
         "If you didn’t request this, you can ignore this email.\n\n"
         "Best regards,\nYour Support Team"
     )
+
     await send_email(subject=subject, to_email=user.email, body=body)
     # Mark reset as requested
     await mark_reset_requested(normalized_email)
@@ -89,9 +87,8 @@ async def reset_user_password(token: str, new_password: str, session: AsyncSessi
         raise HTTPException(status_code=404, detail="Invalid or expired token")
     user.hashed_password = hash_password(new_password)
     # Delete all reset tokens for this user
-    await session.execute(
-        delete(PasswordResetToken).where(PasswordResetToken.user_id == user.id)
-    )
+    await session.execute(delete(PasswordResetToken).where(PasswordResetToken.user_id == user.id))# type: ignore
+
     await session.commit()
     return {"message": "Password reset successful"}
 

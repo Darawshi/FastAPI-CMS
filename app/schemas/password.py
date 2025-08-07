@@ -1,11 +1,16 @@
-from pydantic import BaseModel, EmailStr, constr
+# File: app/schemas/password.py
+# This module defines the schemas for password reset requests and email sending functionality.
+
+from pydantic import BaseModel, EmailStr
+from .common import PasswordType
+
 
 class PasswordResetRequest(BaseModel):
     email: EmailStr
 
 class PasswordResetConfirm(BaseModel):
     token: str
-    new_password: constr(min_length=8)
+    new_password:str= PasswordType
 
 class EmailRequest(BaseModel):
     to_email: EmailStr

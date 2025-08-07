@@ -2,7 +2,6 @@
 
 from datetime import datetime, timezone
 from typing import Optional, TYPE_CHECKING
-
 from sqlalchemy import Column, DateTime
 from uuid import uuid4, UUID
 from sqlmodel import SQLModel, Field, Relationship
@@ -26,4 +25,4 @@ class PasswordResetToken(SQLModel, table=True):
         sa_column=Column(DateTime(timezone=True))
     )
 
-    user: Optional["User"] = Relationship(back_populates="reset_tokens")  #
+    user: Optional["User"] = Relationship(back_populates="reset_tokens")

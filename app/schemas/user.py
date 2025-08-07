@@ -1,11 +1,12 @@
+# app/schemas/user.py
+
 from uuid import UUID
 from typing import Optional
 from datetime import datetime
-from pydantic import EmailStr, constr, field_validator
-
-from app.models.user import User
+from pydantic import EmailStr, field_validator
 from app.models.user_role import UserRole
 from sqlmodel import SQLModel
+from .common import PasswordType
 
 
 # Shared base for all user-related schemas
@@ -18,7 +19,7 @@ class UserBase(SQLModel):
 
 # Used when creating a user (e.g. during registration or admin creation)
 class UserCreate(UserBase):
-    password: constr(min_length=8)
+    password:str = PasswordType
     # noinspection PyMethodFirstArgAssignment
     @field_validator("email")
     def normalize_email(cls, v: str) -> str:
@@ -41,7 +42,7 @@ class UserRead(UserBase):
 class UserUpdateBase(SQLModel):
     email: Optional[EmailStr] = None
     full_name: Optional[str] = None
-    password: Optional[constr(min_length=8)] = None
+    password: Optional[PasswordType] = None  # ✅ This works
 
     @field_validator("email")
     def normalize_email(cls, v: str) -> str:

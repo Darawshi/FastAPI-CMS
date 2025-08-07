@@ -4,7 +4,6 @@ from pydantic import EmailStr
 from sqlalchemy.orm import validates
 from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime, timezone
-
 from app.models.password_reset_token import PasswordResetToken
 from app.models.user_role import UserRole
 from sqlalchemy import Column, DateTime, String, ForeignKey
@@ -53,7 +52,7 @@ class User(SQLModel, table=True):
     )
 
     # Inside User class:
-    reset_tokens: List["PasswordResetToken"] = Relationship(
+    reset_tokens: List[PasswordResetToken] = Relationship(
         back_populates="user"
     )
     @validates("email")

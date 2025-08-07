@@ -1,14 +1,14 @@
-import re
+# app/core/security.py
 
+import re
 from fastapi import HTTPException
 from passlib.context import CryptContext
 from jose import JWTError, jwt, ExpiredSignatureError
 from datetime import datetime, timedelta, timezone
 from typing import Optional
-
 from starlette.status import HTTP_400_BAD_REQUEST
-
 from app.core.config import get_settings
+
 
 settings = get_settings()
 
