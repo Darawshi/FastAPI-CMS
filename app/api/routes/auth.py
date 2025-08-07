@@ -34,7 +34,7 @@ async def forgot_password(data: PasswordResetRequest, session: AsyncSession = De
 async def confirm_reset(data: PasswordResetConfirm, session: AsyncSession = Depends(get_session)):
     return await reset_user_password(data.token, data.new_password, session)
 
-@router.post("/admin/reset-user-password/{user_id}", name="Admin Reset User Password")
+@router.post("/admin-reset-user-password/{user_id}", name="Admin Reset User Password")
 async def reset_user_password_by_admin(user_id: UUID, session: AsyncSession = Depends(get_session) ,
     current_user: User = Depends(require_admin_or_senior_editor)):
     return await perform_admin_password_reset(user_id,current_user, session)

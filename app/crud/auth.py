@@ -48,7 +48,6 @@ async def authenticate_user(email: EmailStr, password: str, session: AsyncSessio
 
     token = create_access_token(data={"sub": str(user.id), "role": user.role})
     return {"access_token": token, "token_type": "bearer"}
-
 async def send_reset_password_token(email: EmailStr, session: AsyncSession):
     normalized_email = str(email).lower().strip()
     if not await can_request_reset(normalized_email):
@@ -83,7 +82,6 @@ async def send_reset_password_token(email: EmailStr, session: AsyncSession):
     # Mark reset as requested
     await mark_reset_requested(normalized_email)
     return {"message": "Reset token sent to your email"}
-
 async def reset_user_password(token: str, new_password: str, session: AsyncSession):
     validate_password_strength(new_password)
     user = await get_user_by_reset_token(token, session)
@@ -95,19 +93,15 @@ async def reset_user_password(token: str, new_password: str, session: AsyncSessi
 
     await session.commit()
     return {"message": "Password reset successful"}
-
 async def change_password_after_reset(new_password: str,current_user: User, session: AsyncSession):
     validate_password_strength(new_password)
-    user = await get_user_by_id(session, current_user,current_user.id)
+    user = await get_user_by_id(session, current_user, current_user.id)
     user.hashed_password = hash_password(new_password)
     # Delete all reset tokens for this user
     await session.execute(delete(PasswordResetToken).where(PasswordResetToken.user_id == user.id))# type: ignore
 
     await session.commit()
     return {"message": "Password reset successful"}
-
-
-
 async def get_user_by_reset_token(token: str, session: AsyncSession) -> User | None:
     result = await session.execute(
         select(PasswordResetToken).where(
@@ -123,12 +117,10 @@ async def get_user_by_reset_token(token: str, session: AsyncSession) -> User | N
         select(User).where(User.id == token_record.user_id)
     )
     return user_result.scalar_one_or_none()
-
 async def perform_admin_password_reset(user_id: UUID, current_user: User,session: AsyncSession) -> dict:
-    result = await session.execute(select(User).where(User.id == user_id))
-    user = result.scalar_one_or_none()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+
+    user = await  get_user_by_id(session, current_user, user_id)
+
         # Apply visibility rules
     if not user_has_permission(current_user, user):
         raise HTTPException(
