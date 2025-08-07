@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1a47017e-a63f-4f54-877a-a9a67d09916d" name="Changes" comment="resset password 2">
-      <change afterPath="$PROJECT_DIR$/migration/versions/4c52d0524c7b_must_change_password.py" afterDir="false" />
+    <list default="true" id="1a47017e-a63f-4f54-877a-a9a67d09916d" name="Changes" comment="resset password 3">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/routes/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/routes/auth.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/crud/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/crud/auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/crud/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/crud/user.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -156,7 +155,7 @@
       <workItem from="1754479878427" duration="265000" />
       <workItem from="1754480233187" duration="13355000" />
       <workItem from="1754517833584" duration="6672000" />
-      <workItem from="1754528121484" duration="12255000" />
+      <workItem from="1754528121484" duration="12504000" />
     </task>
     <task id="LOCAL-00001" summary="asdf">
       <option name="closed" value="true" />
@@ -334,7 +333,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754539572936</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="resset password 3">
+      <option name="closed" value="true" />
+      <created>1754543966163</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1754543966163</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -364,7 +371,8 @@
     <MESSAGE value="nvn" />
     <MESSAGE value="resset password" />
     <MESSAGE value="resset password 2" />
-    <option name="LAST_COMMIT_MESSAGE" value="resset password 2" />
+    <MESSAGE value="resset password 3" />
+    <option name="LAST_COMMIT_MESSAGE" value="resset password 3" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/FastAPI_CMS$main.coverage" NAME="main Coverage Results" MODIFIED="1753519631389" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

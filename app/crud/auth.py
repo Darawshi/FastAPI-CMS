@@ -1,7 +1,6 @@
 # app/crud/auth.py
 import secrets
 from uuid import UUID
-
 from pydantic import EmailStr
 from sqlmodel import select
 from app.core.config import get_settings

@@ -12,11 +12,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.security import hash_password
 from app.services.image_service import process_user_profile_image_upload
 from fastapi import status
-
-
-
-
 from app.services.permissions import get_user_visibility_condition, get_role_order, user_has_permission
+
+
+
 
 async def get_users(session: AsyncSession,current_user: User,offset: int = 0,limit: int = 20,role: Optional[UserRole] = None,is_active: Optional[bool] = None,) -> List[User]:
     stmt = select(User).where(
