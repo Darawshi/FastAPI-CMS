@@ -6,7 +6,7 @@ from uuid import UUID, uuid4
 from datetime import datetime, timezone
 
 
-from app.models.user_branch_link import UserBranchLink  # Actual class import
+from app.models.user_branch_link import UserBranchLink
 
 if TYPE_CHECKING:
     from app.models.user import User
