@@ -1,11 +1,10 @@
-# app/api/routes/auth.py
+# app/routes/auth.py
 # This module defines the authentication routes for user login and password reset functionality.
-from uuid import UUID
 
+from uuid import UUID
 from fastapi import APIRouter, Depends
 from sqlmodel.ext.asyncio.session import AsyncSession
 from typing import AsyncGenerator
-
 from app.core.dependencies import get_current_user
 from app.crud.auth import send_reset_password_token, authenticate_user, reset_user_password, \
     perform_admin_password_reset, change_password_after_reset
