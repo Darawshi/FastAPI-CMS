@@ -5,7 +5,6 @@ from typing import Optional, TYPE_CHECKING
 from uuid import UUID, uuid4
 from datetime import datetime, timezone
 
-
 from app.models.user_branch_link import UserBranchLink
 
 if TYPE_CHECKING:

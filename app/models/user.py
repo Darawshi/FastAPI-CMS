@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, TYPE_CHECKING
 from uuid import UUID, uuid4
 from pydantic import EmailStr
 from sqlalchemy.orm import validates
@@ -8,6 +8,13 @@ from app.models.password_reset_token import PasswordResetToken
 from app.models.user_role import UserRole
 from sqlalchemy import Column, DateTime, String, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID as SqlAlchemyUUID
+
+from app.models.user_branch_link import UserBranchLink
+
+if TYPE_CHECKING:
+    from app.models.branch import Branch
+
+
 
 class User(SQLModel, table=True):
     __tablename__ = "user"
@@ -56,6 +63,10 @@ class User(SQLModel, table=True):
     reset_tokens: List[PasswordResetToken] = Relationship(
         back_populates="user"
     )
+    branches: List["Branch"] = Relationship(
+        back_populates="users", link_model=UserBranchLink
+    )
     @validates("email")
     def normalize_email(self, _, address):
         return str(address).lower()
+
