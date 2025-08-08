@@ -5,9 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1a47017e-a63f-4f54-877a-a9a67d09916d" name="Changes" comment="branch model/schema">
+      <change afterPath="$PROJECT_DIR$/migration/versions/09e8b5dd93c2_add_user_branch_link_table.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/branch.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/branch.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -161,7 +160,7 @@
       <workItem from="1754528121484" duration="12548000" />
       <workItem from="1754575619090" duration="6277000" />
       <workItem from="1754617359187" duration="5760000" />
-      <workItem from="1754623222588" duration="1071000" />
+      <workItem from="1754623222588" duration="1213000" />
     </task>
     <task id="LOCAL-00001" summary="asdf">
       <option name="closed" value="true" />
@@ -387,7 +386,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754620326656</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="branch model/schema">
+      <option name="closed" value="true" />
+      <created>1754624373037</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1754624373037</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
