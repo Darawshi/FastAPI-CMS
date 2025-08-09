@@ -9,7 +9,8 @@ from sqlmodel import SQLModel
 from app.core import database
 from alembic import context
 from app.models.user import User
-
+from app.models.branch import Branch
+from app.models.user_branch_link import UserBranchLink
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config

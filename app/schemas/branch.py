@@ -17,7 +17,7 @@ class BranchCreate(BranchBase):
 class BranchRead(BranchBase):
     id: UUID
     created_at: datetime
-
+    created_by_id: Optional[UUID] = None  # NEW
     model_config = {
         "from_attributes": True
     }

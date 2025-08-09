@@ -1,7 +1,7 @@
 # app/schemas/user.py
 
 from uuid import UUID
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 from pydantic import EmailStr, field_validator
 from app.models.user_role import UserRole
@@ -15,7 +15,7 @@ class UserBase(SQLModel):
     full_name: Optional[str] = None
     role: UserRole = UserRole.senior_editor
     is_active: bool = True
-
+    branch_ids: Optional[List[UUID]] = None  # << Add this
 
 # Used when creating a user (e.g. during registration or admin creation)
 class UserCreate(UserBase):
@@ -33,7 +33,7 @@ class UserRead(UserBase):
     updated_at: datetime
     last_login: Optional[datetime] = None
     user_pic: Optional[str]
-
+    branch_ids: Optional[List[UUID]] = None
     model_config = {
         "from_attributes": True
     }
@@ -43,7 +43,7 @@ class UserUpdateBase(SQLModel):
     email: Optional[EmailStr] = None
     full_name: Optional[str] = None
     password: Optional[PasswordType] = None  # ✅ This works
-
+    branch_ids: Optional[List[UUID]] = None
     @field_validator("email")
     def normalize_email(cls, v: str) -> str:
         return v.lower().strip() if v else v

@@ -1,4 +1,4 @@
-# app/api/routes/users.py
+# app/routes/users.py
 from fastapi import APIRouter, Depends, Query, status, UploadFile, File, Form
 from typing import List, Optional
 
@@ -12,10 +12,10 @@ from app.schemas.user import UserRead, UserUpdate, UserCreate, UserUpdateOwn
 from app.core.dependencies import get_current_user, get_session
 from app.models.user_role import UserRole
 from app.services.image_service import  process_user_profile_image_upload
-from app.services.permissions import validate_user_creation_permissions,  \
+from app.services.permissions import validate_user_creation_permissions, \
     validate_user_update_permissions, validate_user_deactivate_reactivate, \
-    prevent_self_action, require_admin_or_senior_editor_or_editor, \
-    require_admin_or_senior_editor_or_editor_or_category_editor
+    require_admin_or_senior_editor_or_editor, \
+    require_admin_or_senior_editor_or_editor_or_category_editor, prevent_self_action_on_user
 
 router = APIRouter()
 
@@ -98,7 +98,7 @@ async def delete_user(
     session: AsyncSession = Depends(get_session),
     current_user: User = Depends(require_admin_or_senior_editor_or_editor),
 ):
-    prevent_self_action(current_user, user_id)
+    prevent_self_action_on_user(current_user, user_id)
     await delete_user_by_id(session,current_user, user_id)
 
 @router.patch("/{user_id}", response_model=UserRead , name="Update User by ID")
@@ -119,7 +119,7 @@ async def deactivate_user(
     current_user: User = Depends(require_admin_or_senior_editor_or_editor),
 ):
     # Prevent self-deactivation
-    prevent_self_action(current_user, user_id)
+    prevent_self_action_on_user(current_user, user_id)
     # Fetch user to deactivate
     target_user = await get_user_by_id(session, current_user,user_id)
     validate_user_deactivate_reactivate(current_user, target_user)
@@ -133,7 +133,7 @@ async def reactivate_user(
     current_user: User = Depends(require_admin_or_senior_editor_or_editor),
 ):
     # Prevent self-reactivate
-    prevent_self_action(current_user, user_id)
+    prevent_self_action_on_user(current_user, user_id)
     # Fetch user to reactivate
     target_user = await get_user_by_id(session,current_user, user_id)
     validate_user_deactivate_reactivate(current_user, target_user)

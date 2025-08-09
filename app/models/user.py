@@ -1,3 +1,4 @@
+#app/models/user.py
 from typing import Optional, List, TYPE_CHECKING
 from uuid import UUID, uuid4
 from pydantic import EmailStr
@@ -66,7 +67,11 @@ class User(SQLModel, table=True):
     branches: List["Branch"] = Relationship(
         back_populates="users", link_model=UserBranchLink
     )
+    user_branch_links: List["UserBranchLink"] = Relationship(back_populates="user")
     @validates("email")
     def normalize_email(self, _, address):
         return str(address).lower()
 
+    @property
+    def branch_ids(self) -> List[UUID]:
+        return [link.branch_id for link in self.user_branch_links]

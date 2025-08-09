@@ -1,11 +1,16 @@
+# App/crud/user.py
 from datetime import datetime, timezone
 from typing import Optional, List
 from uuid import UUID
 from sqlalchemy import select
 from fastapi import HTTPException, UploadFile
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from sqlalchemy.orm import selectinload
 from sqlmodel import select
+
+from app.crud.user_branch_link import add_user_to_branch, remove_all_branches_for_user
 from app.models.user import User
+from app.models.user_branch_link import UserBranchLink
 from app.models.user_role import UserRole
 from app.schemas.user import UserCreate, UserUpdate, UserUpdateBase
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -20,7 +25,7 @@ from app.services.permissions import get_user_visibility_condition, get_role_ord
 async def get_users(session: AsyncSession,current_user: User,offset: int = 0,limit: int = 20,role: Optional[UserRole] = None,is_active: Optional[bool] = None,) -> List[User]:
     stmt = select(User).where(
         get_user_visibility_condition(current_user)
-    )
+    ).options(selectinload(User.user_branch_links).selectinload(UserBranchLink.branch))
     # Apply optional filters
     if role is not None:
         stmt = stmt.where(User.role == role)
@@ -37,7 +42,11 @@ async def get_users(session: AsyncSession,current_user: User,offset: int = 0,lim
 
 async def get_user_by_id(session: AsyncSession,current_user: User, user_id: UUID) -> Optional[User]:
     # Fetch the requested user
-    stmt = select(User).where(User.id == user_id)
+    stmt = (
+        select(User)
+        .where(User.id == user_id)
+        .options(selectinload(User.user_branch_links).selectinload(UserBranchLink.branch))
+    )
     result = await session.execute(stmt)
     user = result.scalar_one_or_none()
 
@@ -71,7 +80,11 @@ async def create_user(session: AsyncSession, user_create: UserCreate ,created_by
     session.add(db_user)
     try:
         await session.commit()
-        await session.refresh(db_user)
+        await session.refresh(db_user, ["user_branch_links"])
+        # Handle branch links if provided
+        if user_create.branch_ids:
+            for branch_id in user_create.branch_ids:
+                await add_user_to_branch(session, db_user.id, branch_id)
         return db_user
     except IntegrityError:
         await session.rollback()
@@ -95,6 +108,9 @@ async def update_user(session: AsyncSession,db_user: User,user_update: UserUpdat
         # Set the normalized email
         update_data["email"] = normalized_email
 
+    # Extract branch_ids from update_data (if present)
+    branch_ids = update_data.pop("branch_ids", None)
+
     # Apply updates
     for key, value in update_data.items():
         if key == "password" and value is not None:
@@ -111,7 +127,20 @@ async def update_user(session: AsyncSession,db_user: User,user_update: UserUpdat
     session.add(db_user)
     try:
         await session.commit()
-        await session.refresh(db_user)
+        await session.refresh(db_user, ["user_branch_links"])
+
+        # Sync branch links if branch_ids provided
+        if branch_ids is not None:
+            current_branches = await get_branches_for_user(session, db_user.id)
+            current_branch_ids = {branch.id for branch in current_branches}
+
+            new_branch_ids = set(branch_ids)
+            # Add new links
+            for branch_id in new_branch_ids - current_branch_ids:
+                await add_user_to_branch(session, db_user.id, branch_id)
+            # Remove links no longer present
+            for branch_id in current_branch_ids - new_branch_ids:
+                await remove_user_from_branch(session, db_user.id, branch_id)
         return db_user
     except IntegrityError:
         await session.rollback()
@@ -142,6 +171,8 @@ async def delete_user_by_id(session: AsyncSession, current_user: User, user_id: 
             # Maintain 404 for consistency - don't reveal existence of hidden users
             raise HTTPException(status_code=404, detail="User not found")
 
+        # After fetching user and before deleting user:
+        await remove_all_branches_for_user(session, user_id)  # delete all links
         await session.delete(user)
         await session.commit()
 

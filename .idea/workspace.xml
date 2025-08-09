@@ -5,9 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1a47017e-a63f-4f54-877a-a9a67d09916d" name="Changes" comment="branch model/schema">
-      <change afterPath="$PROJECT_DIR$/migration/versions/09e8b5dd93c2_add_user_branch_link_table.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/crud/branch.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/crud/user_branch_link.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/routes/api.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/routes/branch.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/routes/user_branch_link.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/schemas/user_branch_link.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/migration/versions/070424378497_add_user_branch_created_by.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/migration/versions/b9c859ac4295_add_user_branch_link_relation2.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/migration/versions/c3bfa2574830_add_user_branch_link_relation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/crud/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/crud/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/branch.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/branch.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/user_branch_link.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user_branch_link.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/user_role.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user_role.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routes/users.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/users.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/schemas/branch.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/branch.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/schemas/common.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/common.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/schemas/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/permissions.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/permissions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/migration/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/migration/env.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,6 +86,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -160,7 +180,11 @@
       <workItem from="1754528121484" duration="12548000" />
       <workItem from="1754575619090" duration="6277000" />
       <workItem from="1754617359187" duration="5760000" />
-      <workItem from="1754623222588" duration="1213000" />
+      <workItem from="1754623222588" duration="1843000" />
+      <workItem from="1754673365344" duration="1729000" />
+      <workItem from="1754682380981" duration="6709000" />
+      <workItem from="1754700967590" duration="3404000" />
+      <workItem from="1754774328656" duration="5496000" />
     </task>
     <task id="LOCAL-00001" summary="asdf">
       <option name="closed" value="true" />
@@ -394,7 +418,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754624373037</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="branch model/schema">
+      <option name="closed" value="true" />
+      <created>1754624499795</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1754624499795</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
