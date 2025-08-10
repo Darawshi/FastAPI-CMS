@@ -1,75 +1,94 @@
-#app/models/user.py
 from typing import Optional, List, TYPE_CHECKING
 from uuid import UUID, uuid4
-from pydantic import EmailStr
-from sqlalchemy.orm import validates
-from sqlmodel import SQLModel, Field, Relationship
+
+from sqlalchemy.orm import validates, Mapped, mapped_column, Relationship, relationship
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
+from sqlalchemy import String, DateTime, ForeignKey
 from datetime import datetime, timezone
+
 from app.models.password_reset_token import PasswordResetToken
 from app.models.user_role import UserRole
-from sqlalchemy import Column, DateTime, String, ForeignKey
-from sqlalchemy.dialects.postgresql import UUID as SqlAlchemyUUID
-
 from app.models.user_branch_link import UserBranchLink
+
+from app.models.base import Base
 
 if TYPE_CHECKING:
     from app.models.branch import Branch
 
 
 
-class User(SQLModel, table=True):
+class User(Base):
     __tablename__ = "user"
-    id: UUID = Field(default_factory=uuid4, primary_key=True, index=True)
-    email: EmailStr = Field(
-        sa_column=Column(String, unique=True, index=True, nullable=False)
+
+    id: Mapped[UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
+        index=True,
+        unique=True,
+        nullable=False,
     )
-    hashed_password: str
-    full_name: Optional[str] = None
-    role: UserRole = Field(default=UserRole.editor, index=True)
-    is_active: bool = Field(default=True, index=True)
-    must_change_password: bool = Field(default=False)
-    last_login: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(DateTime(timezone=True))
-    )
-    created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
-        sa_column=Column(DateTime(timezone=True))
-    )
-    updated_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
-        sa_column=Column(DateTime(timezone=True))
+    email: Mapped[str] = mapped_column(
+        String,
+        unique=True,
+        index=True,
+        nullable=False)
+    hashed_password: Mapped[str] = mapped_column(nullable=False)
+    full_name: Mapped[Optional[str]] = mapped_column(nullable=True)
+    role: Mapped[UserRole] = mapped_column(
+        nullable=False, default=UserRole.editor, index=True
     )
 
-    user_pic: Optional[str] = Field(
-        default=None,
-        sa_column=Column(String,unique=True, nullable=True)
+    is_active: Mapped[bool] = mapped_column(nullable=False, default=True, index=True)
+    must_change_password: Mapped[bool] = mapped_column(nullable=False, default=False)
+    last_login: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
     )
 
-    # Self-referential relationship for tracking who created whom
-    created_by_id: Optional[UUID] = Field(
-        default=None,
-        sa_column=Column(SqlAlchemyUUID(as_uuid=True), ForeignKey("user.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc)
     )
-    created_by: Optional["User"] = Relationship(
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc)
+    )
+    user_pic: Mapped[Optional[str]] = mapped_column(String, unique=True, nullable=True)
+
+    created_by_id: Mapped[Optional[UUID]] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("user.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    # Relationships
+    created_by: Mapped[Optional["User"]] = Relationship(
+        "User",
         back_populates="users_created",
-        sa_relationship_kwargs={"remote_side": "User.id"}
+        remote_side=[id],
+        lazy = "selectin"
     )
-    users_created: List["User"] = Relationship(
+    users_created: Mapped[List["User"]] = Relationship(
+        "User",
         back_populates="created_by",
-        sa_relationship_kwargs={"cascade": "save-update, merge"}
+        cascade="save-update, merge"
     )
 
-    # Inside User class:
-    reset_tokens: List[PasswordResetToken] = Relationship(
-        back_populates="user"
+    reset_tokens: Mapped[List[PasswordResetToken]] = Relationship(back_populates="user")
+
+    branches: Mapped[List["Branch"]] = relationship(
+        "Branch",
+        secondary="user_branch_link",
+        back_populates="users",
+        overlaps="user_branch_links,user,branch",
+        lazy="selectin",
     )
-    branches: List["Branch"] = Relationship(
-        back_populates="users", link_model=UserBranchLink
+    user_branch_links: Mapped[List[UserBranchLink]] = relationship(
+        "UserBranchLink",
+        back_populates="user",
+        lazy="selectin",
+        overlaps="branches,user,branch"
     )
-    user_branch_links: List["UserBranchLink"] = Relationship(back_populates="user")
+
     @validates("email")
-    def normalize_email(self, _, address):
+    def normalize_email(self, _, address: str) -> str:
         return str(address).lower()
 
     @property

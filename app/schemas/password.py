@@ -1,6 +1,6 @@
 # File: app/schemas/password.py
 # This module defines the schemas for password reset requests and email sending functionality.
-
+from __future__ import annotations
 from pydantic import BaseModel, EmailStr, model_validator
 from .common import PasswordType
 

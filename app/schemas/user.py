@@ -1,21 +1,23 @@
 # app/schemas/user.py
-
-from uuid import UUID
-from typing import Optional, List
 from datetime import datetime
-from pydantic import EmailStr, field_validator
+from typing import Optional, List
+from pydantic import BaseModel, EmailStr, field_validator
+from uuid import UUID
+
 from app.models.user_role import UserRole
-from sqlmodel import SQLModel
 from .common import PasswordType
 
 
 # Shared base for all user-related schemas
-class UserBase(SQLModel):
+class UserBase(BaseModel):
     email: EmailStr
     full_name: Optional[str] = None
     role: UserRole = UserRole.senior_editor
     is_active: bool = True
     branch_ids: Optional[List[UUID]] = None  # << Add this
+    model_config = {
+        "from_attributes": True
+    }
 
 # Used when creating a user (e.g. during registration or admin creation)
 class UserCreate(UserBase):
@@ -39,7 +41,7 @@ class UserRead(UserBase):
     }
 
 
-class UserUpdateBase(SQLModel):
+class UserUpdateBase(BaseModel):
     email: Optional[EmailStr] = None
     full_name: Optional[str] = None
     password: Optional[PasswordType] = None  # ✅ This works
@@ -47,6 +49,10 @@ class UserUpdateBase(SQLModel):
     @field_validator("email")
     def normalize_email(cls, v: str) -> str:
         return v.lower().strip() if v else v
+
+    model_config = {
+        "from_attributes": True
+    }
 
 class UserUpdateOwn(UserUpdateBase):
     pass
@@ -56,6 +62,9 @@ class UserUpdate(UserUpdateBase):
     is_active: Optional[bool] = None
 
 # Used internally for authentication (login input)
-class UserLogin(SQLModel):
+class UserLogin(BaseModel):
     email: EmailStr
     password: str
+    model_config = {
+        "from_attributes": True
+    }

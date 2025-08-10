@@ -2,27 +2,43 @@
 
 from datetime import datetime, timezone
 from typing import Optional, TYPE_CHECKING
-from sqlalchemy import Column, DateTime
-from uuid import uuid4, UUID
-from sqlmodel import SQLModel, Field, Relationship
+from uuid import UUID, uuid4
+
+from sqlalchemy import  DateTime, String, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
+
+from app.models.base import Base
+
 if TYPE_CHECKING:
-    from app.models.user import User  # Avoid circular import
+    from app.models.user import User
 
 
 
-class PasswordResetToken(SQLModel, table=True):
+class PasswordResetToken(Base):
     __tablename__ = "password_reset_token"
 
-    id: UUID = Field(default_factory=uuid4, primary_key=True)
-    user_id: UUID = Field(foreign_key="user.id")
-    token: str = Field(index=True, unique=True)
-    expires_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(DateTime(timezone=True), index=True)  # Add index
+    id: Mapped[UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
+        nullable=False,
     )
-    created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
-        sa_column=Column(DateTime(timezone=True))
+    user_id: Mapped[UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("user.id"),
+        nullable=False,
+    )
+    token: Mapped[str] = mapped_column(String, index=True, unique=True, nullable=False)
+    expires_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), index=True, nullable=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc)
     )
 
-    user: Optional["User"] = Relationship(back_populates="reset_tokens")
+    user: Mapped[Optional["User"]] = relationship(
+        "User",
+        back_populates="reset_tokens",
+        lazy="selectin"
+    )

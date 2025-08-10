@@ -1,36 +1,57 @@
 #app/models/branch.py
-from sqlalchemy import Column, DateTime, ForeignKey
-from sqlmodel import SQLModel, Field, Relationship
-from typing import Optional, TYPE_CHECKING
-from uuid import UUID, uuid4
+from __future__ import annotations
 from datetime import datetime, timezone
+from typing import Optional, TYPE_CHECKING, List
+from uuid import UUID, uuid4
 
-from app.models.user_branch_link import UserBranchLink
+from sqlalchemy import  DateTime, ForeignKey, String
+from sqlalchemy.orm import Mapped, mapped_column, Relationship
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
+
+from app.models.base import Base  # your new Base class
 
 if TYPE_CHECKING:
     from app.models.user import User
 
 
-class Branch(SQLModel, table=True):
+class Branch(Base):
     __tablename__ = "branch"
-    id: UUID = Field(default_factory=uuid4, primary_key=True, index=True)
-    name: str = Field(index=True, nullable=False)
-    description: Optional[str] = None
-    created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
-        sa_column=Column(DateTime(timezone=True))
+
+    id: Mapped[UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
+        unique=True,
+        nullable=False,
+    )
+    name: Mapped[str] = mapped_column(String, unique=True, index=True, nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc)
     )
 
-    # NEW: User who created the branch
-    created_by_id: Optional[UUID] = Field(
-        default=None,
-        sa_column=Column(ForeignKey("user.id", ondelete="SET NULL"), nullable=True)
-    )
-    created_by: Optional["User"] = Relationship(
-        sa_relationship_kwargs={"lazy": "selectin"}
+    created_by_id: Mapped[Optional[UUID]] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("user.id", ondelete="SET NULL"), nullable=True
     )
 
-    users: list["User"] = Relationship(
-        back_populates="branches", link_model=UserBranchLink
+    # Relationships
+    created_by: Mapped[Optional["User"]] = Relationship(
+        "User",
+        lazy="selectin"
     )
-    user_branch_links: list["UserBranchLink"] = Relationship(back_populates="branch")
+
+    users: Mapped[List["User"]] = Relationship(
+        "User",
+        secondary="user_branch_link",
+        back_populates="branches",
+        lazy="selectin",
+        overlaps="user_branch_links,user,branch"
+    )
+
+    user_branch_links: Mapped[List["UserBranchLink"]] = Relationship(
+        "UserBranchLink",
+        back_populates="branch",
+        lazy="selectin",
+        overlaps="users,branch,user"
+    )
+
