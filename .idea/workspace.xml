@@ -4,31 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1a47017e-a63f-4f54-877a-a9a67d09916d" name="Changes" comment="branch routes">
-      <change afterPath="$PROJECT_DIR$/app/models/base.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/migration/versions/f1044a1a898f_sqlalchemy1.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/FastAPI-CMS.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/FastAPI-CMS.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="1a47017e-a63f-4f54-877a-a9a67d09916d" name="Changes" comment="sqlalqhamy">
+      <change afterPath="$PROJECT_DIR$/static/images/users/b936940707d2424a8219d7881f39ae8f.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/core/dependencies.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/dependencies.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/core/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/core/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/core/email_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/email_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/core/security.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/security.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/crud/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/crud/auth.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/crud/branch.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/crud/branch.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/crud/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/crud/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/branch.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/branch.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/password_reset_token.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/password_reset_token.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/user_branch_link.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user_branch_link.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routes/branch.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/branch.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/schemas/password.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/password.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/schemas/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/migration/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/migration/env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/migration/versions/070424378497_add_user_branch_created_by.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/migration/versions/09e8b5dd93c2_add_user_branch_link_table.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/migration/versions/1f5ab3dbe95e_add_password_reset_token_table.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/migration/versions/4c52d0524c7b_must_change_password.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/migration/versions/b9c859ac4295_add_user_branch_link_relation2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/migration/versions/c3bfa2574830_add_user_branch_link_relation.py" beforeDir="false" afterPath="$PROJECT_DIR$/migration/versions/33ed193c6c49_sqlalchemy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/migration/versions/ffe09827e59b_initial_migration.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/permissions.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/permissions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/images/users/96fe3bfb2114417bac192258a663d861.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/images/users/daf79448ee4b45a0b22cec714d852202.jpg" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,7 +43,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/Darawshi/FastAPI-CMS.git&quot;,
-    &quot;accountId&quot;: &quot;3f435d10-3195-40ac-80d2-55df9ecd3565&quot;
+    &quot;accountId&quot;: &quot;568d9caf-6a76-48fa-9c79-3be510161cd5&quot;
   }
 }</component>
   <component name="MarkdownSettingsMigration">
@@ -71,27 +60,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Python.main.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/Bassam/PycharmProjects/FastAPI-CMS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Bassam/PycharmProjects/FastAPI-CMS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Bassam\PycharmProjects\FastAPI-CMS\app\routes" />
@@ -188,7 +177,8 @@
       <workItem from="1754700967590" duration="3404000" />
       <workItem from="1754774328656" duration="17993000" />
       <workItem from="1754792844277" duration="7567000" />
-      <workItem from="1754800587418" duration="1929000" />
+      <workItem from="1754800587418" duration="6336000" />
+      <workItem from="1754807832627" duration="581000" />
     </task>
     <task id="LOCAL-00001" summary="asdf">
       <option name="closed" value="true" />
@@ -438,7 +428,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754779897425</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="sqlalqhamy">
+      <option name="closed" value="true" />
+      <created>1754803487408</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1754803487408</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -472,7 +470,8 @@
     <MESSAGE value="resset password 4" />
     <MESSAGE value="branch model/schema" />
     <MESSAGE value="branch routes" />
-    <option name="LAST_COMMIT_MESSAGE" value="branch routes" />
+    <MESSAGE value="sqlalqhamy" />
+    <option name="LAST_COMMIT_MESSAGE" value="sqlalqhamy" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/FastAPI_CMS$main.coverage" NAME="main Coverage Results" MODIFIED="1753519631389" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

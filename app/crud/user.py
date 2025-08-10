@@ -6,7 +6,6 @@ from sqlalchemy import select
 from fastapi import HTTPException, UploadFile
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import selectinload
-from sqlmodel import select
 
 from app.crud.user_branch_link import add_user_to_branch, remove_all_branches_for_user, get_branches_for_user, \
     remove_user_from_branch

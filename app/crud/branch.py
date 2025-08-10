@@ -4,8 +4,8 @@ from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from fastapi import HTTPException, status
 
 from app.models.branch import Branch
@@ -19,7 +19,7 @@ from app.schemas.branch import BranchCreate, BranchUpdate
 # Create a new branch
 async def create_branch(session: AsyncSession, branch_in: BranchCreate, current_user: User) -> Branch:
     try:
-        branch = Branch.model_validate(branch_in)
+        branch = Branch(**branch_in.model_dump())
         branch.created_by_id = current_user.id
         session.add(branch)
         await session.commit()

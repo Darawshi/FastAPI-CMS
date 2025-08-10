@@ -32,7 +32,7 @@ async def authenticate_user(email: EmailStr, password: str, session: AsyncSessio
     result = await session.execute(select(User).where(User.email == normalized_email))
     user = result.scalars().first()
 
-    if not user or not verify_password(password, user.hashed_password):
+    if not user or not verify_password(password, str(user.hashed_password)):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials",
@@ -52,6 +52,7 @@ async def authenticate_user(email: EmailStr, password: str, session: AsyncSessio
 
     token = create_access_token(data={"sub": str(user.id), "role": user.role})
     return {"access_token": token, "token_type": "bearer"}
+
 async def send_reset_password_token(email: EmailStr, session: AsyncSession):
     normalized_email = str(email).lower().strip()
     if not await can_request_reset(normalized_email):
@@ -86,6 +87,7 @@ async def send_reset_password_token(email: EmailStr, session: AsyncSession):
     # Mark reset as requested
     await mark_reset_requested(normalized_email)
     return {"message": "Reset token sent to your email"}
+
 async def reset_user_password(token: str, new_password: str, session: AsyncSession):
     validate_password_strength(new_password)
     user = await get_user_by_reset_token(token, session)
@@ -97,6 +99,7 @@ async def reset_user_password(token: str, new_password: str, session: AsyncSessi
 
     await session.commit()
     return {"message": "Password reset successful"}
+
 async def change_password_after_reset(new_password: str,current_user: User, session: AsyncSession):
     validate_password_strength(new_password)
     user = await get_user_by_id(session, current_user, current_user.id)
@@ -106,6 +109,7 @@ async def change_password_after_reset(new_password: str,current_user: User, sess
     await session.execute(delete(PasswordResetToken).where(PasswordResetToken.user_id == user.id))# type: ignore
     await session.commit()
     return {"message": "Password reset successful"}
+
 async def get_user_by_reset_token(token: str, session: AsyncSession) -> User | None:
     result = await session.execute(
         select(PasswordResetToken).where(
@@ -121,6 +125,7 @@ async def get_user_by_reset_token(token: str, session: AsyncSession) -> User | N
         select(User).where(User.id == token_record.user_id)
     )
     return user_result.scalar_one_or_none()
+
 async def perform_admin_password_reset(user_id: UUID, current_user: User,session: AsyncSession) -> dict:
 
     user = await  get_user_by_id(session, current_user, user_id)
@@ -141,7 +146,7 @@ async def perform_admin_password_reset(user_id: UUID, current_user: User,session
     # Send email notification
     await send_email(
         subject="Your password was reset by an admin",
-        to_email=user.email,
+        to_email=str(user.email),
         body=(
             f"Hello {user.full_name},\n\n"
             "Your account password has been reset by an administrator.\n"

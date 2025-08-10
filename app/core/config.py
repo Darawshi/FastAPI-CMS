@@ -4,28 +4,28 @@ from functools import lru_cache
 
 
 class Settings(BaseSettings):
-    DB_HOST: str
-    DB_PORT: int
-    DB_NAME: str
-    DB_USER: str
-    DB_PASSWORD: str
+    DB_HOST: str| None = None
+    DB_PORT: int =5432
+    DB_NAME: str| None = None
+    DB_USER: str| None = None
+    DB_PASSWORD: str| None = None
 
-    ONE_TIME_PASSWORD: str
+    ONE_TIME_PASSWORD: str| None = None
 
-    SMTP_HOST: str
-    SMTP_PORT: int
-    SMTP_USER: str
-    SMTP_PASSWORD: str
-    SMTP_FROM: str
+    SMTP_HOST: str| None = None
+    SMTP_PORT: int| None = None
+    SMTP_USER: str| None = None
+    SMTP_PASSWORD: str| None = None
+    SMTP_FROM: str| None = None
 
-    RESET_LINK_BASE: str
-    RESET_TOKEN_LIFETIME_MINUTES: int   # default to 60
+    RESET_LINK_BASE: str| None = None
+    RESET_TOKEN_LIFETIME_MINUTES: int =60  # default to 60
 
-    IMAGE_UPLOAD_DIR: str
-    MAX_FILE_SIZE_MB: int
+    IMAGE_UPLOAD_DIR: str| None = None
+    MAX_FILE_SIZE_MB: int =8
 
-    SECRET_KEY: str            # added for JWT secret
-    ALGORITHM: str = "HS256"
+    SECRET_KEY: str| None = None            # added for JWT secret
+    ALGORITHM: str | None = None
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60000  # default to 60 if not set
 
     @property
