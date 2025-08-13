@@ -24,3 +24,5 @@ app.include_router(api_router)  # just include the master router here
 @app.get("/")
 async def root():
     return {"message": "CMS is running"}
+
+
